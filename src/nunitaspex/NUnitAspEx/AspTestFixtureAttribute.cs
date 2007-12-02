@@ -10,39 +10,40 @@ namespace NUnitAspEx
     /// <summary>
     /// AspTestFixtureAttribute is used to identify a AspTestFixture class
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-    public sealed class AspTestFixtureAttribute : Attribute
+    [AttributeUsage( AttributeTargets.Class,AllowMultiple=false )]
+    public sealed class AspTestFixtureAttribute:Attribute
     {
         private string _relativePhysicalPath;
         private string _virtualPath;
-        
+
         static AspTestFixtureAttribute()
         {
             try
             {
                 Addins.Register( new AspTestFixtureBuilder() );
-				Addins.Register( new AspTestCaseBuilder() );
+                Addins.Register( new AspTestCaseBuilder() );
 
-                if (AspFixtureHost.Current != null)
+                if(AspFixtureHost.Current != null)
                 {
                     // inside host, redirect all "http"-protocol requests
-					IWebRequestCreate factory = AspFixtureRequest.Factory;
-					WebRequest.RegisterPrefix("http", factory);
-                    WebRequest.RegisterPrefix("asptest", factory);
-                    Trace.WriteLine("Registered asptest prefix");
-                }            
+                    IWebRequestCreate factory = AspFixtureRequest.Factory;
+                    WebRequest.RegisterPrefix( "http",factory );
+                    WebRequest.RegisterPrefix( "asptest",factory );
+                    Trace.WriteLine( "Registered asptest prefix" );
+                }
             }
             catch(Exception ex)
             {
-                Trace.WriteLine("Failed registering asptest prefix: "+ex);
+                Trace.WriteLine( "Failed registering asptest prefix: "+ex );
             }
         }
 
-        public AspTestFixtureAttribute() : this("/", "~/")
+        public AspTestFixtureAttribute()
+            : this( "/","~/" )
         {
         }
 
-        public AspTestFixtureAttribute(string virtualPath, string relativePhysicalPath)
+        public AspTestFixtureAttribute(string virtualPath,string relativePhysicalPath)
         {
             this.VirtualPath = virtualPath;
             this.RelativePhysicalPath = relativePhysicalPath;
@@ -53,8 +54,8 @@ namespace NUnitAspEx
             get { return _relativePhysicalPath; }
             set
             {
-                _relativePhysicalPath = (value != null) ? value.TrimStart('\\','/','~') : "";
-                _relativePhysicalPath = _relativePhysicalPath.Replace('/','\\');
+                _relativePhysicalPath = (value != null) ? value.TrimStart( '\\','/','~' ) : "";
+                _relativePhysicalPath = _relativePhysicalPath.Replace( '/','\\' );
             }
         }
 
@@ -63,8 +64,8 @@ namespace NUnitAspEx
             get { return _virtualPath; }
             set
             {
-                _virtualPath = (value != null) ? value.TrimStart('\\','/','~') : "";
-                _virtualPath = "/" + _virtualPath.Replace('\\','/');
+                _virtualPath = (value != null) ? value.TrimStart( '\\','/','~' ) : "";
+                _virtualPath = "/" + _virtualPath.Replace( '\\','/' );
             }
         }
     }

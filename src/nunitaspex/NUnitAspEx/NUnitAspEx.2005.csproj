@@ -138,8 +138,8 @@
     <Compile Include="Core\AspTestMethod.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Core\RemotableEventListenerProxy.cs" />
     <Compile Include="Core\RemotableFilterProxy.cs" />
+    <Compile Include="Core\RemotableEventListenerProxy.cs" />
     <Compile Include="IAspFixtureHost.cs">
       <SubType>Code</SubType>
     </Compile>
