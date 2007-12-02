@@ -51,6 +51,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.core.interfaces, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\lib\nunit.framework.dll</HintPath>
@@ -99,6 +103,7 @@
     <Compile Include="AspTestWithinRootedHost.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MyNUnitAddinHelper.cs" />
     <Content Include="TestWebs\Test1\testpage.aspx" />
     <None Include="TestWebs\Test1\web.config" />
   </ItemGroup>

@@ -2,12 +2,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Reflection;
-using System.Threading;
 using System.Web;
 using System.Web.Hosting;
 using NUnit.Core;
-using NUnit.Core.Builders;
 using NUnitAspEx.Client;
 
 namespace NUnitAspEx.Core
@@ -150,7 +147,8 @@ namespace NUnitAspEx.Core
 
         public AspFixtureHost()
         {
-            bool bRes = WebRequest.RegisterPrefix("asptest", AspFixtureRequest.Factory);                        
+//            bool bRes = WebRequest.RegisterPrefix("asptest", AspFixtureRequest.Factory);                        
+//            RegisterAspTestPseudoProtocol();
         }
 
         /// <summary>
@@ -172,6 +170,11 @@ namespace NUnitAspEx.Core
             {
                 throw new InvalidOperationException("Cannot initialize the Host from within the Host's AppDomain");
             }
+
+            // "redirect" http protocol
+            RegisterAspTestPseudoProtocol();
+            // register our nunit extentsions in this AppDomain as well
+            NUnitAddinHelper.InstallExtensions(CoreExtensions.Host);
             
             // remember rootLocation
             _rootLocation = rootLocation;
@@ -187,6 +190,22 @@ namespace NUnitAspEx.Core
             SimpleWorkerRequest wr = new AspFixtureWorkerRequest(string.Empty, string.Empty, sw);
             HttpRuntime.ProcessRequest(wr);
             //Console.WriteLine(sw.ToString());
+        }
+
+        private void RegisterAspTestPseudoProtocol()
+        {
+            try
+            {
+                // inside host, redirect all "http"-protocol requests
+                IWebRequestCreate factory = AspFixtureRequest.Factory;
+                WebRequest.RegisterPrefix("http", factory);
+                WebRequest.RegisterPrefix("asptest", factory);
+                Trace.WriteLine("Registered asptest prefix");
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Failed registering asptest prefix: " + ex);
+            }
         }
 
         #endregion Lifecycle Methods
@@ -222,9 +241,9 @@ namespace NUnitAspEx.Core
         /// Creates a new TestSuite using the passed <c>fixtureType</c> and executes it immediately
         /// </summary>
         /// <remarks>
-        /// This method is called by <see cref="AspTestFixture.Run(EventListener,IFilter)"/>
+        /// This method is called by <see cref="AspTestFixture.Run(EventListener,ITestFilter)"/>
         /// </remarks>
-        internal TestResult CreateAndExecuteTestSuite( Type fixtureType, int assemblyKey, EventListener listener, IFilter filter )
+        internal TestResult CreateAndExecuteTestSuite( Type fixtureType, EventListener listener, ITestFilter filter )
         {
             lock (SyncRoot)
             {
@@ -233,18 +252,24 @@ namespace NUnitAspEx.Core
                     throw new InvalidOperationException("Cannot execute fixture outside the Host's environment");
                 }
             
+                if (filter == null)
+                {
+                    filter = TestFilter.Empty;
+                }
+
                 TestResult testResult;
                 TestSuite testSuite = null;
                 try
                 {
-                    NUnitTestFixtureBuilder builder = new NUnitTestFixtureBuilder();
-                    testSuite = builder.BuildFrom( fixtureType, assemblyKey );
+                    AspTestFixtureBuilder builder = new AspTestFixtureBuilder();
+                    testSuite = (TestSuite) builder.BuildFrom( fixtureType );
                     testResult = testSuite.Run( listener, filter );
                 }
                 catch(Exception ex)
                 {
                     // signal suite creation failure - TODO: look for a better way!	            
-                    TestResult tr = new TestSuiteResult( testSuite, "creating testsuite" );
+                    TestInfo testInfo = new TestInfo(testSuite);
+                    TestResult tr = new TestSuiteResult( testInfo, testSuite.TestName.FullName );
                     tr.Failure("failed creating testsuite", ex.ToString());
                     testResult = tr;
                 }

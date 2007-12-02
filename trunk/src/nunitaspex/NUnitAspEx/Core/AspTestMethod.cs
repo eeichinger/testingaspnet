@@ -11,7 +11,7 @@ namespace NUnitAspEx.Core
     /// <summary>
     /// Summary description for AspTestMethod.
     /// </summary>
-    internal class AspTestMethod : TestMethod
+    internal class AspTestMethod : NUnitTestMethod
     {
         private static AspTestMethod _currentTest = null;
 
@@ -20,28 +20,24 @@ namespace NUnitAspEx.Core
             get { return _currentTest; }
         }
 
-        private TestCaseResult _currentTestCaseResult;	    
-        private MethodInfo _testMethod;
-	    
-        public AspTestMethod(MethodInfo method, Type expectedException, string expectedMessage) : base(method, expectedException, expectedMessage)
+        private TestCaseResult _currentTestCaseResult;
+        private readonly MethodInfo _testMethod;
+
+        public AspTestMethod(MethodInfo method)
+            : base(method)
         {
             _testMethod = method;
         }
 
-        public AspTestMethod(MethodInfo method, string expectedExceptionName, string expectedMessage) : base(method, expectedExceptionName, expectedMessage)
-        {
-            _testMethod = method;
-        }
-	    
         public override void RunTestMethod(TestCaseResult testResult)
         {
             AspTestAttribute att = (AspTestAttribute)_testMethod.GetCustomAttributes(typeof(AspTestAttribute), false)[0];
-            
+
             if (att.Page == null)
             {
                 throw new ArgumentNullException("Page property must be set");
             }
-            
+
             HttpWorkerRequest wr;
 
             // check, if we're executed within host
@@ -49,7 +45,7 @@ namespace NUnitAspEx.Core
             if (host != null)
             {
                 TextWriter tw = (att.SuppressOutput) ? null : Console.Out;
-                wr = new AspFixtureWorkerRequest(  att.Page, att.Query, tw ); 
+                wr = new AspFixtureWorkerRequest(att.Page, att.Query, tw);
                 if (att.UseHttpRuntime)
                 {
                     // delegate execution to AspTestExecutionModule
@@ -57,23 +53,24 @@ namespace NUnitAspEx.Core
                     _currentTestCaseResult = testResult;
                     try
                     {
-                        HttpRuntime.ProcessRequest( wr );
+                        HttpRuntime.ProcessRequest(wr);
                         return; // don't continue!
                     }
                     finally
                     {
                         _currentTestCaseResult = null;
-                        _currentTest = null;                        
+                        _currentTest = null;
                     }
                 }
             }
             else
             {
-                string physicalDir = Path.Combine( AppDomain.CurrentDomain.BaseDirectory, att.AppRelativePhysicalDir );
-                wr = new SimpleWorkerRequest( att.AppVirtualDir, physicalDir, att.Page, att.Query, Console.Out );                
+                string physicalDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, att.AppRelativePhysicalDir);
+                wr = new SimpleWorkerRequest(att.AppVirtualDir, physicalDir, att.Page, att.Query, Console.Out);
+                // TODO: get extended
             }
-            
-            HttpContext ctx = new HttpContext( wr );
+
+            HttpContext ctx = new HttpContext(wr);
             HttpContext.Current = ctx;
             try
             {
@@ -92,12 +89,12 @@ namespace NUnitAspEx.Core
         {
             try
             {
-                base.RunTestMethod( _currentTestCaseResult );
+                base.RunTestMethod(_currentTestCaseResult);
             }
             finally
             {
                 AspTestExecutionModule.Clear();
-                _currentTestCaseResult = null;	            
+                _currentTestCaseResult = null;
             }
         }
     }

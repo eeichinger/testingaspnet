@@ -74,12 +74,22 @@
                     Project = "{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "nunit.core.interfaces"
+                    AssemblyName = "nunit.core.interfaces"
+                    HintPath = "..\..\..\lib\nunit.core.interfaces.dll"
+                />
             </References>
         </Build>
         <Files>
             <Include>
                 <File
                     RelPath = "GuestBookTestSuite.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NUnitAddinHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
