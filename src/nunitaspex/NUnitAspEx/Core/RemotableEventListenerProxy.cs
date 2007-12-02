@@ -11,21 +11,21 @@ namespace NUnitAspEx.Core
 	/// </remarks>
 	internal class RemotableEventListenerProxy : LongLivingMarshalByRefObject, EventListener
 	{
-		private EventListener _wrappedListener;
+		private readonly EventListener _wrappedListener;
 
 		public RemotableEventListenerProxy(EventListener wrappedListener)
 		{
 			this._wrappedListener = wrappedListener;
 		}
 
-		public void RunStarted(Test[] tests)
+		public void RunStarted(string name, int testCount)
 		{
-			this._wrappedListener.RunStarted(tests);
+			this._wrappedListener.RunStarted(name, testCount);
 		}
 
-		public void RunFinished(TestResult[] results)
+		public void RunFinished(TestResult result)
 		{
-			this._wrappedListener.RunFinished(results);
+			this._wrappedListener.RunFinished(result);
 		}
 
 		public void RunFinished(Exception exception)
@@ -33,9 +33,9 @@ namespace NUnitAspEx.Core
 			this._wrappedListener.RunFinished(exception);
 		}
 
-		public void TestStarted(TestCase testCase)
+		public void TestStarted(TestName testName)
 		{
-			this._wrappedListener.TestStarted(testCase);
+			this._wrappedListener.TestStarted(testName);
 		}
 
 		public void TestFinished(TestCaseResult result)
@@ -43,10 +43,10 @@ namespace NUnitAspEx.Core
 			this._wrappedListener.TestFinished(result);
 		}
 
-		public void SuiteStarted(TestSuite suite)
-		{
-			//this._wrappedListener.SuiteStarted(suite);
-		}
+	    public void SuiteStarted(TestName testName)
+	    {
+	        //this._wrappedListener.SuiteStarted(testName);
+	    }
 
 		public void SuiteFinished(TestSuiteResult result)
 		{

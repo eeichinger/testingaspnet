@@ -1,8 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Net;
-using NUnit.Core;
-using NUnitAspEx.Client;
 using NUnitAspEx.Core;
 
 namespace NUnitAspEx
@@ -16,27 +12,13 @@ namespace NUnitAspEx
         private string _relativePhysicalPath;
         private string _virtualPath;
 
-        static AspTestFixtureAttribute()
-        {
-            try
-            {
-                Addins.Register( new AspTestFixtureBuilder() );
-                Addins.Register( new AspTestCaseBuilder() );
-
-                if(AspFixtureHost.Current != null)
-                {
-                    // inside host, redirect all "http"-protocol requests
-                    IWebRequestCreate factory = AspFixtureRequest.Factory;
-                    WebRequest.RegisterPrefix( "http",factory );
-                    WebRequest.RegisterPrefix( "asptest",factory );
-                    Trace.WriteLine( "Registered asptest prefix" );
-                }
-            }
-            catch(Exception ex)
-            {
-                Trace.WriteLine( "Failed registering asptest prefix: "+ex );
-            }
-        }
+//        static AspTestFixtureAttribute()
+//        {
+//            if (AspFixtureHost.Current != null)
+//            {
+////                AspFixtureHost.RegisterAspTestPseudoProtocol();
+//            }
+//        }
 
         public AspTestFixtureAttribute()
             : this( "/","~/" )

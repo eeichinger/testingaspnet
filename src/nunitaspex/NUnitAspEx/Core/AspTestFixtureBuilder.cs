@@ -4,20 +4,29 @@ using NUnit.Core.Builders;
 
 namespace NUnitAspEx.Core
 {
-	/// <summary>
+    /// <summary>
     /// AspTestFixtureBuilder knows how to build an [AspTestFixture]
     /// </summary>
     [SuiteBuilder]
     public class AspTestFixtureBuilder : NUnitTestFixtureBuilder
     {
-		#region GenericTestFixtureBuilder Overrides
+        #region GenericTestFixtureBuilder Overrides
 
-		protected override TestSuite MakeSuite(Type type, int assemblyKey)
-		{
-			return new AspTestFixture(type, assemblyKey);
-		}
+        protected override TestSuite MakeSuite(Type type)
+        {
+            if (AspFixtureHost.Current == null)
+            {
+                // outside host create an AspTestFixtureAdapter
+                return new AspTestFixture(type);
+            }
+            else
+            {
+                // inside host simply delegate to the default implementation
+                return base.MakeSuite(type);
+            }
+        }
 
-		#endregion
+        #endregion
 
         #region ISuiteBuilder Members
 
@@ -30,6 +39,16 @@ namespace NUnitAspEx.Core
             return type.IsDefined(typeof(AspTestFixtureAttribute), false);
         }
 
-        #endregion        
+//        /// <summary>
+//        /// In addition to NUnitTestCaseBuilder, we allow for AspTestCaseBuilder
+//        /// </summary>
+//        /// <param name="type"></param>
+//        protected override void InstallTestCaseBuilders(Type type)
+//        {
+//            base.InstallTestCaseBuilders(type);
+//            //CoreExtensions.Host.TestBuilders.Install(new AspTestCaseBuilder());
+//        }
+
+        #endregion
     }
 }

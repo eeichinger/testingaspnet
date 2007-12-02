@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = "bin\Debug\"
+                    OutputPath = "bin\1.1\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -80,6 +80,11 @@
                     HintPath = "..\lib\nunit.framework.dll"
                     Private = "True"
                 />
+                <Reference
+                    Name = "nunit.core.interfaces"
+                    AssemblyName = "nunit.core.interfaces"
+                    HintPath = "..\lib\nunit.core.interfaces.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -116,6 +121,11 @@
                 />
                 <File
                     RelPath = "AspTestWithinRootedHost.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MyNUnitAddinHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

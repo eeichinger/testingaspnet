@@ -2,28 +2,33 @@ using NUnit.Core;
 
 namespace NUnitAspEx.Core
 {
-	internal class RemotableFilterProxy : LongLivingMarshalByRefObject, IFilter
-	{
-		private IFilter _wrappedFilter;
+    // TODO: revisit for later NUnit versions (current: 2.4.1)
 
-		public RemotableFilterProxy(IFilter wrappedFilter)
-		{
-			this._wrappedFilter = wrappedFilter;
-		}
+    // remote filtering is not possible, because some ITest 
+    // implementations (like NUnitTestMethod) are not serializable
 
-		public bool Pass(TestSuite suite)
-		{
-			return this._wrappedFilter.Pass( suite );
-		}
+    internal class RemotableFilterProxy : LongLivingMarshalByRefObject, ITestFilter
+    {
+        private readonly ITestFilter _wrappedFilter;
 
-		public bool Pass(TestCase test)
-		{
-			return this._wrappedFilter.Pass( test );
-		}
+        public RemotableFilterProxy(ITestFilter wrappedFilter)
+        {
+            this._wrappedFilter = wrappedFilter;
+        }
 
-		public bool Exclude
-		{
-			get { return this._wrappedFilter.Exclude; }
-		}
-	}
+        public bool Pass(ITest test)
+        {
+            return this._wrappedFilter.Pass(test);
+        }
+
+        public bool Match(ITest test)
+        {
+            return this._wrappedFilter.Match(test);
+        }
+
+        public bool IsEmpty
+        {
+            get { return this._wrappedFilter.IsEmpty; }
+        }
+    }
 }

@@ -29,14 +29,14 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = "bin\Debug\NUnitAspEx.xml"
+                    DocumentationFile = "bin\1.1\NUnitAspEx.xml"
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     NoStdLib = "false"
                     NoWarn = "1591"
                     Optimize = "false"
-                    OutputPath = "bin\Debug\"
+                    OutputPath = "bin\1.1\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -75,6 +75,11 @@
                     AssemblyName = "nunit.core"
                     HintPath = "..\lib\nunit.core.dll"
                     Private = "True"
+                />
+                <Reference
+                    Name = "nunit.core.interfaces"
+                    AssemblyName = "nunit.core.interfaces"
+                    HintPath = "..\lib\nunit.core.interfaces.dll"
                 />
             </References>
         </Build>
@@ -117,6 +122,11 @@
                 />
                 <File
                     RelPath = "IAspFixtureHost.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NUnitAddinHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -197,6 +207,11 @@
                 />
                 <File
                     RelPath = "Core\AspTestMethod.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Core\LongLivingMarshalByRefObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
