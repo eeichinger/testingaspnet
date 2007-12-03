@@ -10,6 +10,9 @@ namespace NUnitAspEx.Core
             : base(fixtureType)
         { }
 
+		/// <summary>
+		/// Create the ASP.NET AppDomain and executes the fixture there.
+		/// </summary>
 		public override TestResult Run(EventListener listener, ITestFilter filter)
 		{
 			using( new TestContext() )
@@ -19,7 +22,7 @@ namespace NUnitAspEx.Core
 				listener.SuiteStarted( this.TestName );
 				long startTime = DateTime.Now.Ticks;
 
-				Run1(suiteResult, listener, filter);
+				RunWithinHost(suiteResult, listener, filter);
 
 				long stopTime = DateTime.Now.Ticks;
 				double time = ((double)(stopTime - startTime)) / (double)TimeSpan.TicksPerSecond;
@@ -33,16 +36,13 @@ namespace NUnitAspEx.Core
         /// <summary>
         /// Create the ASP.NET AppDomain and executes the fixture there.
         /// </summary>
-        public TestSuiteResult Run1(TestSuiteResult result, EventListener listener, ITestFilter filter)
+        private TestSuiteResult RunWithinHost(TestSuiteResult result, EventListener listener, ITestFilter filter)
         {
             // create the Host instance based on given AspTestFixtureAttribute properties
             AspTestFixtureAttribute att = (AspTestFixtureAttribute)this.FixtureType.GetCustomAttributes(typeof(AspTestFixtureAttribute), false)[0];
 
             // create & execute TestSuite within Host's AppDomain
             AspFixtureHost host = null;
-			// RemotableEventListenerProxy below suppresses calls to SuiteStarted/SuiteFinished events
-			// -> call it manually here
-			listener.SuiteStarted(this.TestName);
             try
             {
                 host = AspFixtureHost.CreateInstance(att, this.FixtureType.Assembly.CodeBase);
@@ -64,9 +64,6 @@ namespace NUnitAspEx.Core
             {
                 Trace.WriteLine("Failed executing TestSuite on asp.net host:" + ex);
 				throw;
-//				result = new TestSuiteResult(new TestInfo(this), TestName.Name);
-//				listener.SuiteFinished(result);
-//				return result;
             }
             finally
             {
