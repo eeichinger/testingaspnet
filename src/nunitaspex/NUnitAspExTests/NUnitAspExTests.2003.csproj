@@ -63,6 +63,7 @@
                     Name = "NUnitAspEx"
                     Project = "{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                    Private = "True"
                 />
                 <Reference
                     Name = "System.Web"
@@ -78,12 +79,13 @@
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
                     HintPath = "..\lib\nunit.framework.dll"
-                    Private = "True"
+                    Private = "False"
                 />
                 <Reference
                     Name = "nunit.core.interfaces"
                     AssemblyName = "nunit.core.interfaces"
                     HintPath = "..\lib\nunit.core.interfaces.dll"
+                    Private = "False"
                 />
             </References>
         </Build>

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using NUnit.Framework;
 using NUnitAspEx;
 
@@ -14,6 +15,7 @@ namespace NUnitAspExTests
             AspTestClient clnt = new AspTestClient();
             
             string content = clnt.GetPage( "/testpage.aspx" ).Trim();
+			Trace.WriteLine(content);
             Assert.AreEqual( "Hi, I'm the testpage!", content );
             // session value is set by page
             Assert.AreEqual( "testvalue", AspTestContext.HttpContext.Session["testkey"] );

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Web;
 using System.Web.Hosting;
 using NUnit.Core;
@@ -60,8 +61,15 @@ namespace NUnitAspEx.Core
             }
 
             // finally create & initialize Web Application Host instance
-            AspFixtureHost _host = (AspFixtureHost)System.Web.Hosting.ApplicationHost.CreateApplicationHost( typeof(AspFixtureHost), "/"+att.VirtualPath.Trim('/'), physicalHostDir );
-            _host.Initialize( currentDir, AppDomain.CurrentDomain, Console.Out);
+        	string virtualPath = "/" + att.VirtualPath.Trim('/');
+        	AspFixtureHost _host = (AspFixtureHost)System.Web.Hosting.ApplicationHost.CreateApplicationHost( typeof(AspFixtureHost), virtualPath, physicalHostDir );
+			string[] preloadAssemblies = new string[]
+				{
+					typeof(ITest).Assembly.Location // nunit.core.interfaces
+					, typeof(TestCase).Assembly.Location // nunit.core
+				};
+
+            _host.Initialize( currentDir, AppDomain.CurrentDomain, Console.Out, preloadAssemblies);
             return _host;
         }
 
@@ -79,13 +87,11 @@ namespace NUnitAspEx.Core
             {
 				s_current = null;
 				host.ShutDown();
-				AppDomain hostDomain = host.HostDomain;
-				AppDomain.Unload(hostDomain);
 			}
             catch (Exception ex)
             {
-                Trace.WriteLine(ex);
-            }
+				Trace.WriteLine("Exception during fixture host shutdown:" + ex);
+			}
         }        
         
         private void ShutDown()
@@ -94,13 +100,15 @@ namespace NUnitAspEx.Core
             {
                 lock(SyncRoot)
                 {
-					Trace.WriteLine("shutting down host");
+					Trace.WriteLine("inside shutting down host");
 					s_current = null;
-                }
+					HttpRuntime.Close();
+					HttpRuntime.UnloadAppDomain();
+				}
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                Trace.WriteLine("Exception inside unloading HttpRuntime host:" + ex);
             }                        
         }
 
@@ -111,6 +119,7 @@ namespace NUnitAspEx.Core
         private object _syncRoot = new object();
         private string _rootLocation;
         private AppDomain _creatorDomain;
+		private Assembly[] _preloadedAssemblies;
 
         /// <summary>
         /// Use to synchronize access to this host instance
@@ -164,19 +173,28 @@ namespace NUnitAspEx.Core
         /// <summary>
         /// Initializes the newly created host instance.
         /// </summary>
-        private void Initialize( string rootLocation, AppDomain creatorDomain,  TextWriter cout )
+        private void Initialize( string rootLocation, AppDomain creatorDomain,  TextWriter cout, string[] preloadAssemblies )
         {
             if (AspFixtureHost.Current != null)
             {
                 throw new InvalidOperationException("Cannot initialize the Host from within the Host's AppDomain");
             }
+		
+			_preloadedAssemblies = new Assembly[preloadAssemblies.Length];
+			for(int i=0;i<_preloadedAssemblies.Length;i++)
+			{
+				_preloadedAssemblies[i] = Assembly.LoadFrom(preloadAssemblies[i]);
+			}
+
+			AppDomain.CurrentDomain.AssemblyResolve+=new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			//AppDomain.CurrentDomain.UnhandledException+=new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
             // "redirect" http protocol
             RegisterAspTestPseudoProtocol();
             // register our nunit extentsions in this AppDomain as well
-            NUnitAddinHelper.InstallExtensions(CoreExtensions.Host);
-            
-            // remember rootLocation
+        	RegisterNUnitAddin();
+
+        	// remember rootLocation
             _rootLocation = rootLocation;
             // remember creating AppDomain
             _creatorDomain = creatorDomain;
@@ -187,12 +205,37 @@ namespace NUnitAspEx.Core
 
             // force HttpRuntime initialization
             StringWriter sw = new StringWriter();
-            SimpleWorkerRequest wr = new AspFixtureWorkerRequest(string.Empty, string.Empty, sw);
+            AspFixtureWorkerRequest wr = new AspFixtureWorkerRequest(string.Empty, string.Empty, sw);
             HttpRuntime.ProcessRequest(wr);
-            //Console.WriteLine(sw.ToString());
+			if (wr.StatusCode != 200 && wr.StatusCode != 404)
+			{
+				throw new Exception("HttpRuntime Setup Failure:" + sw.ToString());
+			}
         }
 
-        private void RegisterAspTestPseudoProtocol()
+		private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			foreach(Assembly ass in _preloadedAssemblies)
+			{
+				if (args.Name == ass.GetName().FullName)
+				{
+					return ass;
+				}
+			}
+			return null;
+		}
+
+//		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+//		{
+//			Trace.WriteLine("Unhandled exception occured:" + e.ExceptionObject);
+//		}
+
+    	private static void RegisterNUnitAddin()
+    	{
+    		NUnitAddinHelper.InstallExtensions(CoreExtensions.Host);
+    	}
+
+    	private void RegisterAspTestPseudoProtocol()
         {
             try
             {
@@ -243,7 +286,7 @@ namespace NUnitAspEx.Core
         /// <remarks>
         /// This method is called by <see cref="AspTestFixture.Run(EventListener,ITestFilter)"/>
         /// </remarks>
-        internal TestResult CreateAndExecuteTestSuite( Type fixtureType, EventListener listener, ITestFilter filter )
+        internal TestSuiteResult CreateAndExecuteTestSuite( Type fixtureType, TestSuiteResult suiteResult, EventListener listener, ITestFilter filter )
         {
             lock (SyncRoot)
             {
@@ -257,26 +300,29 @@ namespace NUnitAspEx.Core
                     filter = TestFilter.Empty;
                 }
 
-                TestResult testResult;
                 TestSuite testSuite = null;
-                try
-                {
+//                try
+//                {
                     AspTestFixtureBuilder builder = new AspTestFixtureBuilder();
                     testSuite = (TestSuite) builder.BuildFrom( fixtureType );
-                    testResult = testSuite.Run( listener, filter );
-                }
-                catch(Exception ex)
-                {
-                    // signal suite creation failure - TODO: look for a better way!	            
-                    TestInfo testInfo = new TestInfo(testSuite);
-                    TestResult tr = new TestSuiteResult( testInfo, testSuite.TestName.FullName );
-                    tr.Failure("failed creating testsuite", ex.ToString());
-                    testResult = tr;
-                }
-                return testResult;
+                    suiteResult = (TestSuiteResult) testSuite.Run( listener, filter );
+//                }
+//                catch(Exception ex)
+//                {
+//                    Trace.WriteLine( "Error executing TestSuite:" + ex );
+//                    // signal suite creation failure - TODO: look for a better way!	            
+//                    TestInfo testInfo = new TestInfo(testSuite);
+//
+//                    TestResult tr = new TestSuiteResult( testInfo, testSuite.TestName.FullName );
+//                    tr.Failure("failed creating testsuite", ex.ToString());
+//                    testResult = tr;
+//                    testResult = new TestSuiteResult(null, ex.ToString());
+//                }
+                return suiteResult;
             }
         }
         
-        #endregion Test Execution Methods        
-    }
+        
+		#endregion Test Execution Methods
+	}
 }
