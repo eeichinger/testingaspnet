@@ -13,7 +13,7 @@ namespace NUnitAspEx
 	    private static bool _isActive;
 	    private static HttpContext _httpContext;
         private static HttpSessionState _httpSession;
-	    
+
 	    internal static bool IsActive
 	    {
 	        get { return _isActive; }
@@ -23,7 +23,10 @@ namespace NUnitAspEx
 	    {
 	        get
 	        {
-	            _httpContext.Items["AspSession"] = _httpSession;
+				if (_httpContext != null)
+				{
+					_httpContext.Items["AspSession"] = _httpSession;
+				}
 	            return _httpContext;
 	        }
 	    }
@@ -68,8 +71,8 @@ namespace NUnitAspEx
             }
 
             // store for later use in Testmethod
-           _httpContext = HttpContext.Current; 
-           _httpSession = _httpContext.Session;
-        }
-    }
+			_httpContext = ((HttpApplication)sender).Context; 
+			_httpSession = _httpContext.Session;
+		}
+	}
 }

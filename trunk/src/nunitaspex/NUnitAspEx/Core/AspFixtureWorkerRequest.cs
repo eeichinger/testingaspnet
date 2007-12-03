@@ -7,10 +7,23 @@ namespace NUnitAspEx.Core
 {
     internal class AspFixtureWorkerRequest : SimpleWorkerRequest
     {
+		private int _statusCode;
+
         public AspFixtureWorkerRequest( string page, string query, TextWriter writer ) 
             : base(page, query, writer )
         {
         }
+
+    	public int StatusCode
+    	{
+    		get { return this._statusCode; }
+    	}
+
+    	public override void SendStatus(int statusCode, string statusDescription)
+		{
+			_statusCode = statusCode;
+			base.SendStatus(statusCode, statusDescription);
+		}
 
         public override string MapPath(string virtualPath)
         {

@@ -18,7 +18,6 @@ namespace GuestBook
 		
 		protected void Application_Start(Object sender, EventArgs e)
 		{
-
 		}
  
 		protected void Session_Start(Object sender, EventArgs e)
@@ -28,7 +27,11 @@ namespace GuestBook
 
 		protected void Application_BeginRequest(Object sender, EventArgs e)
 		{
-
+//			if (Request.Path.Length > 1)
+//			{
+//				System.Diagnostics.Trace.WriteLine("beginrequest - throwing exception");
+//				throw new Exception("aasdasd");
+//			}
 		}
 
 		protected void Application_EndRequest(Object sender, EventArgs e)

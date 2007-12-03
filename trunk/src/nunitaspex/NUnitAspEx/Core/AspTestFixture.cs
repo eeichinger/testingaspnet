@@ -10,23 +10,42 @@ namespace NUnitAspEx.Core
             : base(fixtureType)
         { }
 
+		public override TestResult Run(EventListener listener, ITestFilter filter)
+		{
+			using( new TestContext() )
+			{
+				TestSuiteResult suiteResult = new TestSuiteResult( new TestInfo(this), TestName.Name);
+
+				listener.SuiteStarted( this.TestName );
+				long startTime = DateTime.Now.Ticks;
+
+				Run1(suiteResult, listener, filter);
+
+				long stopTime = DateTime.Now.Ticks;
+				double time = ((double)(stopTime - startTime)) / (double)TimeSpan.TicksPerSecond;
+				suiteResult.Time = time;
+
+				listener.SuiteFinished(suiteResult);
+				return suiteResult;
+			}			
+		}
+
         /// <summary>
         /// Create the ASP.NET AppDomain and executes the fixture there.
         /// </summary>
-        public override TestResult Run(EventListener listener, ITestFilter filter)
+        public TestSuiteResult Run1(TestSuiteResult result, EventListener listener, ITestFilter filter)
         {
             // create the Host instance based on given AspTestFixtureAttribute properties
             AspTestFixtureAttribute att = (AspTestFixtureAttribute)this.FixtureType.GetCustomAttributes(typeof(AspTestFixtureAttribute), false)[0];
 
             // create & execute TestSuite within Host's AppDomain
             AspFixtureHost host = null;
+			// RemotableEventListenerProxy below suppresses calls to SuiteStarted/SuiteFinished events
+			// -> call it manually here
+			listener.SuiteStarted(this.TestName);
             try
             {
                 host = AspFixtureHost.CreateInstance(att, this.FixtureType.Assembly.CodeBase);
-
-                // RemotableEventListenerProxy below suppresses calls to SuiteStarted/SuiteFinished events
-                // -> call it manually here
-                listener.SuiteStarted(this.TestName);
 
                 // wrap listener and filter with remotable references
                 RemotableEventListenerProxy proxyListener = new RemotableEventListenerProxy(listener);
@@ -37,18 +56,17 @@ namespace NUnitAspEx.Core
                 //ITestFilter proxyFilter  = new RemotableFilterProxy(filter);
                 ITestFilter proxyFilter = TestFilter.Empty;
 
-                TestSuiteResult result =
-                    (TestSuiteResult)host.CreateAndExecuteTestSuite(this.FixtureType, proxyListener, proxyFilter);
-
-                // finally inform listener that we are done
-                listener.SuiteFinished(result);
+                result = host.CreateAndExecuteTestSuite(this.FixtureType, result, proxyListener, proxyFilter);
 
                 return result;
             }
             catch (Exception ex)
             {
                 Trace.WriteLine("Failed executing TestSuite on asp.net host:" + ex);
-                throw;
+				throw;
+//				result = new TestSuiteResult(new TestInfo(this), TestName.Name);
+//				listener.SuiteFinished(result);
+//				return result;
             }
             finally
             {
