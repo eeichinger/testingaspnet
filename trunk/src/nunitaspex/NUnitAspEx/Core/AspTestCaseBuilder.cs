@@ -1,22 +1,40 @@
-using System;
 using System.Reflection;
 using NUnit.Core;
-using NUnit.Core.Builders;
+using NUnit.Core.Extensibility;
 
 namespace NUnitAspEx.Core
 {
-    [TestCaseBuilder]
-    public class AspTestCaseBuilder : NUnitTestCaseBuilder
+//    [TestCaseBuilder]
+    public class AspTestCaseBuilder : ITestCaseBuilder2
     {
-        public override bool CanBuildFrom(System.Reflection.MethodInfo method)
+        public bool CanBuildFrom(System.Reflection.MethodInfo method)
+        {
+            return CanBuildFrom(method, null);
+        }
+
+        public bool CanBuildFrom(System.Reflection.MethodInfo method, Test test)
         {
             bool isDefined = method.IsDefined(typeof(AspTestAttribute), false);
             return isDefined;
         }
 
-        protected override TestCase MakeTestCase(MethodInfo method)
+        public Test BuildFrom(MethodInfo method)
         {
-            return new AspTestMethod(method);
+            return BuildFrom(method, null);
         }
+
+        public Test BuildFrom(MethodInfo method, Test parentSuite)
+        {
+//            return (CoreExtensions.Host.TestCaseProviders.HasTestCasesFor(method) ? BuildParameterizedMethodSuite(method, parentSuite) : BuildSingleTestMethod(method, null));
+            TestMethod test = new AspTestMethod(method);
+            NUnitFramework.ApplyCommonAttributes(method, test);
+            NUnitFramework.ApplyExpectedExceptionAttribute(method, test);
+            return test;
+        }
+
+//        protected override TestCase MakeTestCase(MethodInfo method)
+//        {
+//            return new AspTestMethod(method);
+//        }
     }
 }

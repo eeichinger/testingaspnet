@@ -38,7 +38,7 @@ namespace NUnitAspEx.Core
 			this._wrappedListener.TestStarted(testName);
 		}
 
-		public void TestFinished(TestCaseResult result)
+		public void TestFinished(TestResult result)
 		{
 			this._wrappedListener.TestFinished(result);
 		}
@@ -48,7 +48,7 @@ namespace NUnitAspEx.Core
 	        //this._wrappedListener.SuiteStarted(testName);
 	    }
 
-		public void SuiteFinished(TestSuiteResult result)
+		public void SuiteFinished(TestResult result)
 		{
 			// ignore
 			//this._wrappedListener.SuiteFinished(result);

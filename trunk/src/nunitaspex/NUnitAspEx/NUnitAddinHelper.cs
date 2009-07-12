@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using NUnit.Core.Extensibility;
 using NUnitAspEx.Core;
 
@@ -12,9 +14,14 @@ namespace NUnitAspEx
     /// public class MyNUnitAddinHelper : NUnitAddinHelper 
     /// {}
     /// </example>
-    [NUnit.Core.Extensibility.NUnitAddin]
+    [NUnitAddin]
     public class NUnitAddinHelper : IAddin
     {
+        static NUnitAddinHelper()
+        {
+            Debugger.Break();
+        }
+
         public bool Install(IExtensionHost host)
         {
             return InstallExtensions(host);
@@ -23,7 +30,7 @@ namespace NUnitAspEx
         internal static bool InstallExtensions(IExtensionHost host)
         {
             IExtensionPoint testDecorators = host.GetExtensionPoint("TestDecorators");
-//            testDecorators.Install( new AspTestFixtureDecorator() );
+            testDecorators.Install( new AspTestFixtureDecorator() );
 
             IExtensionPoint suiteBuilders = host.GetExtensionPoint("SuiteBuilders");
             suiteBuilders.Install( new AspTestFixtureBuilder() );

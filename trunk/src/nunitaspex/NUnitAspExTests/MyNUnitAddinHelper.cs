@@ -1,9 +1,8 @@
-using System;
-using System.Text;
+using NUnit.Core.Extensibility;
 
 namespace NUnitAspExTests
 {
-    [NUnit.Core.Extensibility.NUnitAddin]
+    [NUnitAddin]
     public class MyNUnitAddinHelper : NUnitAspEx.NUnitAddinHelper 
     {}
 }

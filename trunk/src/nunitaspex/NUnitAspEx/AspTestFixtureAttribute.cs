@@ -1,5 +1,4 @@
 using System;
-using NUnitAspEx.Core;
 
 namespace NUnitAspEx
 {

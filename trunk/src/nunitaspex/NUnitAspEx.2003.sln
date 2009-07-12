@@ -1,26 +1,20 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspEx.2003", "NUnitAspEx\NUnitAspEx.2003.csproj", "{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspExTests.2003", "NUnitAspExTests\NUnitAspExTests.2003.csproj", "{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		1.1 = 1.1
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		1.1|Any CPU = 1.1|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}.1.1|Any CPU.ActiveCfg = 1.1|Any CPU
+		{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}.1.1|Any CPU.Build.0 = 1.1|Any CPU
+		{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}.1.1|Any CPU.ActiveCfg = 1.1|Any CPU
+		{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}.1.1|Any CPU.Build.0 = 1.1|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}.1.1.ActiveCfg = 1.1|.NET
-		{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}.1.1.Build.0 = 1.1|.NET
-		{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}.1.1.ActiveCfg = 1.1|.NET
-		{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}.1.1.Build.0 = 1.1|.NET
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
