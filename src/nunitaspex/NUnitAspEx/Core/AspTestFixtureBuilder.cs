@@ -1,18 +1,25 @@
 using System;
 using NUnit.Core;
-using NUnit.Core.Builders;
+using NUnit.Core.Extensibility;
 
 namespace NUnitAspEx.Core
 {
     /// <summary>
     /// AspTestFixtureBuilder knows how to build an [AspTestFixture]
     /// </summary>
-    [SuiteBuilder]
-    public class AspTestFixtureBuilder : NUnitTestFixtureBuilder
+//    [SuiteBuilder]
+    public class AspTestFixtureBuilder :
+                NUnit.Core.Builders.NUnitTestFixtureBuilder, 
+        ISuiteBuilder
     {
         #region GenericTestFixtureBuilder Overrides
 
-        protected override TestSuite MakeSuite(Type type)
+        protected override void AddTestCases(Type fixtureType)
+        {
+            base.AddTestCases(fixtureType);
+        }
+
+        public new Test BuildFrom(Type type)
         {
             if (AspFixtureHost.Current == null)
             {
@@ -22,7 +29,7 @@ namespace NUnitAspEx.Core
             else
             {
                 // inside host simply delegate to the default implementation
-                return base.MakeSuite(type);
+                return base.BuildFrom(type);
             }
         }
 
@@ -34,7 +41,7 @@ namespace NUnitAspEx.Core
         // of SampleFixtureExtensionAttribute. Note that an attribute does not
         // have to be used. You can use any arbitrary set of rules that can be 
         // implemented using reflection on the type.
-        public override bool CanBuildFrom(Type type)
+        public new bool CanBuildFrom(Type type)
         {
             return type.IsDefined(typeof(AspTestFixtureAttribute), false);
         }

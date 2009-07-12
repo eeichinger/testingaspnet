@@ -17,7 +17,7 @@ namespace NUnitAspEx.Core
 		{
 			using( new TestContext() )
 			{
-				TestSuiteResult suiteResult = new TestSuiteResult( new TestInfo(this), TestName.Name);
+				TestResult suiteResult = new TestResult( new TestInfo(this) );
 
 				listener.SuiteStarted( this.TestName );
 				long startTime = DateTime.Now.Ticks;
@@ -36,7 +36,7 @@ namespace NUnitAspEx.Core
         /// <summary>
         /// Create the ASP.NET AppDomain and executes the fixture there.
         /// </summary>
-        private TestSuiteResult RunWithinHost(TestSuiteResult result, EventListener listener, ITestFilter filter)
+        private TestResult RunWithinHost(TestResult result, EventListener listener, ITestFilter filter)
         {
             // create the Host instance based on given AspTestFixtureAttribute properties
             AspTestFixtureAttribute att = (AspTestFixtureAttribute)this.FixtureType.GetCustomAttributes(typeof(AspTestFixtureAttribute), false)[0];

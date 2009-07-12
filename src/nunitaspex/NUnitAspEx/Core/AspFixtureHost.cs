@@ -4,11 +4,9 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Web;
-using System.Web.Hosting;
 using NUnit.Core;
 using NUnit.Framework;
 using NUnitAspEx.Client;
-using TestCase = NUnit.Core.TestCase;
 
 namespace NUnitAspEx.Core
 {
@@ -87,7 +85,7 @@ namespace NUnitAspEx.Core
             string[] preloadAssemblies = new string[]
 				{
 					typeof(ITest).Assembly.Location // nunit.core.interfaces
-					, typeof(TestCase).Assembly.Location // nunit.core
+					, typeof(NUnit.Core.CoreExtensions).Assembly.Location // nunit.core
 					, typeof(TestAttribute).Assembly.Location
 				};
 
@@ -322,7 +320,7 @@ namespace NUnitAspEx.Core
         /// <remarks>
         /// This method is called by <see cref="AspTestFixture.Run(EventListener,ITestFilter)"/>
         /// </remarks>
-        internal TestSuiteResult CreateAndExecuteTestSuite(Type fixtureType, TestSuiteResult suiteResult, EventListener listener, ITestFilter filter)
+        internal TestResult CreateAndExecuteTestSuite(Type fixtureType, TestResult suiteResult, EventListener listener, ITestFilter filter)
         {
             lock (SyncRoot)
             {
@@ -341,7 +339,7 @@ namespace NUnitAspEx.Core
                 //                {
                 AspTestFixtureBuilder builder = new AspTestFixtureBuilder();
                 testSuite = (TestSuite)builder.BuildFrom(fixtureType);
-                suiteResult = (TestSuiteResult)testSuite.Run(listener, filter);
+                testSuite.Run(suiteResult,listener, filter);
                 //                }
                 //                catch(Exception ex)
                 //                {

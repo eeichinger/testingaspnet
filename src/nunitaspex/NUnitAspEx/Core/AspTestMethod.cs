@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Web;
 using System.Web.Hosting;
 using NUnit.Core;
-using NUnitAspEx;
 
 namespace NUnitAspEx.Core
 {
@@ -20,7 +19,7 @@ namespace NUnitAspEx.Core
             get { return _currentTest; }
         }
 
-        private TestCaseResult _currentTestCaseResult;
+        private TestResult _currentTestCaseResult;
         private readonly MethodInfo _testMethod;
 
         public AspTestMethod(MethodInfo method)
@@ -29,7 +28,7 @@ namespace NUnitAspEx.Core
             _testMethod = method;
         }
 
-        public override void RunTestMethod(TestCaseResult testResult)
+        public override void RunTestMethod(TestResult testResult)
         {
             AspTestAttribute att = (AspTestAttribute)_testMethod.GetCustomAttributes(typeof(AspTestAttribute), false)[0];
 
