@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <project xmlns="http://nant.sf.net/schemas/nant.xsd"
-	name="Common.Logging" default="build">
+	name="NUnitAspEx" default="build">
 
 	<echo message="NUnitAspEx Source" />
 
