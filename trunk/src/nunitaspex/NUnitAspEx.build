@@ -1,156 +1,29 @@
 <?xml version="1.0" ?>
-<project
-  xmlns="http://nant.sf.net/release/0.85/nant.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://nant.sf.net/release/0.85/nant.xsd http://nant.sf.net/release/0.85/nant.xsd"
+<project xmlns="http://nant.sf.net/schemas/nant.xsd"
+		 name="Common.Logging" default="package"> <!-- compile-all -->
 
-  name="NAnt.NUnit2OutProc" default="test-all"
->
-  <property name="build.defines" value="DEBUG,TRACE,LOG" />
-  <property name="nant.settings.currentframework" value="net-1.1" />
+  <!-- global project settings -->
+  <property name="project.name" value="NUnitAspEx"/>
+  <property name="logging.basedir" value="${project::get-base-directory()}"/>
+  <property name="tool.dir" value="${logging.basedir}/tools" />
 
-  <!-- set build.date property to current date in format yyyy-MM-dd -->
-  <tstamp property="build.date" pattern="yyyy-MM-dd" />
-  <property name="build.debug" value="false" />
-  <property name="build.config" value="debug" />
-  <property name="build.defines" value="DEBUG,TRACE" unless="${property::exists('build.defines')}" />
-  <property name="build.outputdir" value="${project::get-base-directory()}/build/task" />
-  <property name="test.outputdir" value="${project::get-base-directory()}/build/test" />
-  <property name="lib.dir" value="./lib" />
+  <!-- debug or release -->
+  <property name="project.build.config" value="debug"/>
+  <property name="project.build.package" value="true"/>
 
-  <target name="set-framework-net-1.0">
-    <property name="nant.settings.currentframework" value="net-1.0" />
-    <property name="current.build.defines" value="${build.defines},NET_1_0" />
-  </target>
+  <property name="compile-net-1.0" value="false"/>
+  <property name="compile-net-1.1" value="true"/>
+  <property name="compile-net-2.0" value="true"/>
 
-  <target name="set-framework-net-1.1">
-    <property name="nant.settings.currentframework" value="net-1.1" />
-    <property name="current.build.defines" value="${build.defines},NET_1_1" />
-  </target>
+  <property name="package.version" value="1.0.0" unless="${property::exists('project.version')}"/>
 
-  <target name="set-framework-net-2.0">
-    <property name="nant.settings.currentframework" value="net-2.0" />
-    <property name="current.build.defines" value="${build.defines},NET_2_0" />
-  </target>
+  <property name="build-examples" value="false"/>
+  <property name="build-tests" value="true"/>
+  <property name="build-integration-tests" value="true"/>
 
-  <target name="set-framework-mono-2.0">
-    <property name="nant.settings.currentframework" value="mono-2.0" />
-    <property name="current.build.defines" value="${build.defines},MONO_2_0" />
-  </target>
+  <!-- Include shared helpers -->
+  <include buildfile="${logging.basedir}/shared/Logging.include"/>
+  <!-- Include main build targets -->
+  <include buildfile="${logging.basedir}/shared/Logging.build"/>
 
-  <target name="clean">
-    <!-- delete nant build output -->
-    <property name="target.dir" value="${build.outputdir}"/>
-    <echo message="Deleting all builds from all configurations : '${target.dir}'"/>
-    <delete
-        dir="${target.dir}"
-        if="${directory::exists(target.dir)}"
-        failonerror="false"/>
-
-    <delete failonerror="false">
-      <fileset basedir="${project::get-base-directory()}">
-        <include name="**/obj" />
-        <include name="**/bin" />
-      </fileset>
-    </delete>
-  </target>
-
-  <target name="build-task">
-
-	<assemblyfileset id="testAssemblies" basedir="${lib.dir}">
-		<include name="NUnit.Framework.dll"/>
-		<include name="System.dll"/>
-	</assemblyfileset>
-
-    <!-- ensure output dir exists -->
-        <mkdir dir="${build.outputdir}" />
-
-    <!-- build NAnt.NUnit2OutProc.dll -->
-    <csc target="library" define="${build.defines}" warnaserror="true" debug="${build.debug}" output="${build.outputdir}/${project::get-name()}Tasks.dll" doc="${build.outputdir}/${project::get-name()}Tasks.xml">
-      <nowarn>
-        <!-- do not report warnings for missing XML comments -->
-        <warning number="1591" />
-        <!-- do not report deprecation warnings -->
-        <warning number="0618" />
-        <!-- do not report unreachable code -->
-        <warning number="0162" />
-      </nowarn>
-      <sources failonempty="true">
-        <include name="src/NAnt.NUnit2OutProc.Task/**/*.cs" />
-        <!-- common assembly-level attributes -->
-        <!-- include name="../CommonAssemblyInfo.cs" /-->
-      </sources>
-
-      <resources basedir="src/NAnt.NUnit2OutProc.Task" prefix="NAnt.NUnit2OutProc" dynamicprefix="true">
-        <include name="Resources/**/*" />
-      </resources>
-
-      <references basedir="${lib.dir}">
-        <include name="NAnt.Core.dll"/>
-        <include name="NAnt.DotNetTasks.dll"/>
-      </references>
-    </csc>
-
-  </target>
-
-  <target name="build-test">
-
-    <!-- ensure output dir exists -->
-    <mkdir dir="${test.outputdir}/${nant.settings.currentframework}" />
-
-    <!-- build Test assembly -->
-    <csc target="library" define="${current.build.defines}" warnaserror="true" debug="${build.debug}" output="${test.outputdir}/${nant.settings.currentframework}/${project::get-name()}Tests.dll">
-      <nowarn>
-        <!-- do not report warnings for missing XML comments -->
-        <warning number="1591" />
-        <!-- do not report deprecation warnings -->
-        <warning number="0618" />
-      </nowarn>
-      <sources failonempty="true">
-        <include name="test/NAnt.NUnit2OutProc.Tests/**/*.cs" />
-        <!-- common assembly-level attributes -->
-        <!-- include name="../CommonAssemblyInfo.cs" /-->
-      </sources>
-
-      <references refid="testAssemblies" />
-    </csc>
-
-	<copy todir="${test.outputdir}/${nant.settings.currentframework}" >
-		   <fileset refid="testAssemblies" />
-	   </copy>
-  </target>
-
-  <target name="test-all" description="Rebuilds and tests with all frameworks" depends="clean, build-task">
-
-    <!-- point to external nunit installation and load custom nunit task -->
-    <property name="nant.nunit2outproc.nunitpath" value="${project::get-base-directory()}/nunit/" />
-    <loadtasks assembly="${build.outputdir}/${project::get-name()}Tasks.dll" />
-
-<!--
-    <call target="set-framework-net-1.0" />
-    <call target="build-test" />
-    <call target="test" />
--->
-
-    <call target="set-framework-net-1.1" />
-    <call target="build-test" />
-    <call target="test" />
-
-    <call target="set-framework-net-2.0" />
-    <call target="build-test" />
-    <call target="test" />
-
-<!--
-    <call target="set-framework-mono-2.0" />
-    <call target="build-test" />
-    <call target="test" />
--->
-  </target>
-
-  <target name="test">
-    <nunit2outproc>
-      <!-- formatter type="Plain" / -->
-      <test assemblyname="${test.outputdir}/${nant.settings.currentframework}/${project::get-name()}Tests.dll" />
-    </nunit2outproc>
-  </target>
 </project>
