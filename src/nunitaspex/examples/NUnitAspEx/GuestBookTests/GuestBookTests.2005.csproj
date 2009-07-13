@@ -75,9 +75,9 @@
     <Compile Include="NUnitAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NUnitAspEx\NUnitAspEx.2003.csproj">
+    <ProjectReference Include="..\..\..\src\NUnitAspEx\NUnitAspEx.2008.csproj">
       <Project>{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}</Project>
-      <Name>NUnitAspEx.2003</Name>
+      <Name>NUnitAspEx.2008</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

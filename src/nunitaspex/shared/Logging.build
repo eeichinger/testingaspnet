@@ -246,8 +246,6 @@
     <!-- initialize the temp.build.skip property to false -->
     <property name="temp.build.skip" value="false"/>
     <call target="copykeys"/>
-    <property name="common.lib.dir"
-              value="../../common/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
     <if test="${not temp.build.skip}">
       <property name="lib.dir"
                 value="${logging.basedir}/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
@@ -269,8 +267,6 @@
           depends="set-net-2.0-runtime-configuration, check-logging-basedir, clean-current-bin-dir">
     <property name="temp.build.skip" value="false"/>
     <call target="copykeys"/>
-    <property name="common.lib.dir"
-              value="../../common/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
     <if test="${not temp.build.skip}">
       <property name="lib.dir"
                 value="${logging.basedir}/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
@@ -315,15 +311,6 @@
   <target name="copylibs">
     <echo message="Current bin dir = ${current.bin.dir}"/>
     <echo message="Current lib dir = ${lib.dir}"/>
-
-    <!-- copy libraries to project lib directories -->
-    <copy todir="${lib.dir}">
-      <fileset basedir="${common.lib.dir}">
-        <include name="*.dll"/>
-        <include name="*.xml"/>
-        <exclude name="${project.name}.???"/> <!-- don't copy lib we're building right now -->
-      </fileset>
-    </copy>
 
     <!-- copy libraries to compile time directory -->
     <copy todir="${current.bin.dir}">
