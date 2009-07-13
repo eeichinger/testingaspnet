@@ -29,20 +29,20 @@ namespace NUnitAspEx
 	        }
 	    }
 	    
-	    public static bool IsInTestMethodHandler
-	    {
-	        get
-	        {
-	            return AspTestMethodHandler.IsActive;
-	        }
-	    }
-	    
-	    public static bool IsInTestModule
-	    {
-	        get
-	        {
-	            return AspTestExecutionModule.IsActive;
-	        }
-	    }
+//	    public static bool IsInTestMethodHandler
+//	    {
+//	        get
+//	        {
+//	            return AspTestMethodHandler.IsActive;
+//	        }
+//	    }
+//	    
+//	    public static bool IsInTestModule
+//	    {
+//	        get
+//	        {
+//	            return AspTestExecutionModule.IsActive;
+//	        }
+//	    }
 	}
 }

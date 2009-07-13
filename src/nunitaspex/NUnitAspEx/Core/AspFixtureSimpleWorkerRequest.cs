@@ -5,11 +5,11 @@ using System.Web.Hosting;
 
 namespace NUnitAspEx.Core
 {
-    internal class AspFixtureWorkerRequest : SimpleWorkerRequest
+    internal class AspFixtureSimpleWorkerRequest : SimpleWorkerRequest
     {
 		private int _statusCode;
 
-        public AspFixtureWorkerRequest( string page, string query, TextWriter writer ) 
+        public AspFixtureSimpleWorkerRequest( string page, string query, TextWriter writer ) 
             : base(page, query, writer )
         {
         }

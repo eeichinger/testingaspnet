@@ -6,7 +6,7 @@ using NUnitAspEx.Core;
 namespace NUnitAspEx.Client
 {
     /// <summary>
-    /// Encapsulates a request from within a testsuite marked as <see cref="AspTestFixtureAttribute" /> using the "asptest://" pseudo-protocol.
+    /// Encapsulates a request from within a testsuite using the "asptest://" pseudo-protocol.
     /// </summary>
     internal class AspFixtureRequest : CustomizableHttpWebRequest
     {
@@ -38,9 +38,9 @@ namespace NUnitAspEx.Client
             // "outputStream" is the stream created by CreateOutputStream() (we know it's a memory stream)           
             byte[] bodyPayload = ((MemoryStream)outputStream).ToArray();
 
-            // execute request
+            // execute request against current fixture host
             AspFixtureHost host = AspFixtureHost.Current;
-            AspTestClientRequest.ResponseData rp = host.ProcessAspFixtureRequest( this, bodyPayload );
+            AspFixtureRequestWorkerRequest.ResponseData rp = host.ProcessAspFixtureRequest( this, bodyPayload );
             
             HttpWebResponse response = new AspFixtureResponse( this.Uri, this.Verb, rp.Headers, rp.Version, rp.StatusCode, rp.StatusDescription, this.MediaType, rp.ContentLength, false, rp.Stream );
             

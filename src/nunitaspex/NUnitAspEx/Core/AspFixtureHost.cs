@@ -4,8 +4,6 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Web;
-using NUnit.Core;
-using NUnit.Framework;
 using NUnitAspEx.Client;
 
 namespace NUnitAspEx.Core
@@ -13,7 +11,7 @@ namespace NUnitAspEx.Core
     /// <summary>
     /// An AspFixtureHost lives inside it's own AppDomain with an initialized HttpRuntime.
     /// </summary>
-    internal class AspFixtureHost : MarshalByRefObject, IAspFixtureHost
+    public class AspFixtureHost : MarshalByRefObject, IAspFixtureHost
     {
         #region Static Instance Lifetime Handling
 
@@ -31,13 +29,18 @@ namespace NUnitAspEx.Core
             get { return s_current; }
         }
 
+        public static IAspFixtureHost CreateInstance(string virtualPath, string relativePhysicalPath, object testFixture)
+        {
+            return CreateInstance(virtualPath, relativePhysicalPath, testFixture.GetType().Assembly.CodeBase);
+        }
+
         /// <summary>
-        /// Creates a new Host instance within a new AppDomain based on the Properties of the passed <see cref="AspTestFixtureAttribute"/>.
+        /// Creates a new Host instance within a new AppDomain based on the passed in Properties.
         /// </summary>
         /// <remarks>
         /// You must not call this method from within an existing Host's AppDomain.
         /// </remarks>
-        internal static AspFixtureHost CreateInstance(AspTestFixtureAttribute att, string rootLocation)
+        private static AspFixtureHost CreateInstance(string virtualPath, string relativePhysicalPath, string rootLocation)
         {
             if (AspFixtureHost.Current != null)
             {
@@ -47,7 +50,7 @@ namespace NUnitAspEx.Core
             string currentDir = new FileInfo(new Uri(rootLocation).LocalPath).DirectoryName; //AppDomain.CurrentDomain.BaseDirectory;
 
             // setup up target directory
-            string physicalHostDir = currentDir.TrimEnd('\\', '/') + "\\" + att.RelativePhysicalPath.Trim('\\', '/') + "\\";
+            string physicalHostDir = currentDir.TrimEnd('\\', '/') + "\\" + relativePhysicalPath.Trim('\\', '/') + "\\";
             physicalHostDir = new DirectoryInfo(physicalHostDir).FullName.TrimEnd('\\') + "\\";
             string physicalHostBinDir = physicalHostDir + "bin\\";
 
@@ -80,13 +83,13 @@ namespace NUnitAspEx.Core
             }
 
             // finally create & initialize Web Application Host instance
-            string virtualPath = "/" + att.VirtualPath.Trim('/');
+            virtualPath = "/" + virtualPath.Trim('/');
             AspFixtureHost _host = (AspFixtureHost)System.Web.Hosting.ApplicationHost.CreateApplicationHost(typeof(AspFixtureHost), virtualPath, physicalHostDir);
             string[] preloadAssemblies = new string[]
 				{
-					typeof(ITest).Assembly.Location // nunit.core.interfaces
-					, typeof(NUnit.Core.CoreExtensions).Assembly.Location // nunit.core
-					, typeof(TestAttribute).Assembly.Location
+//					typeof(TestAttribute).Assembly.Location
+//					, typeof(ITest).Assembly.Location // nunit.core.interfaces
+//					, typeof(NUnit.Core.CoreExtensions).Assembly.Location // nunit.core
 				};
 
             _host.Initialize(currentDir, AppDomain.CurrentDomain, Console.Out, preloadAssemblies);
@@ -114,29 +117,11 @@ namespace NUnitAspEx.Core
             }
         }
 
-        private void ShutDown()
-        {
-            try
-            {
-                lock (SyncRoot)
-                {
-                    Trace.WriteLine("inside shutting down host");
-                    s_current = null;
-                    HttpRuntime.Close();
-                    HttpRuntime.UnloadAppDomain();
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("Exception inside unloading HttpRuntime host:" + ex);
-            }
-        }
-
         #endregion Static Instance Lifetime Handling
 
         #region Instance Properties
 
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
         private string _rootLocation;
         private AppDomain _creatorDomain;
         private Assembly[] _preloadedAssemblies;
@@ -175,9 +160,30 @@ namespace NUnitAspEx.Core
         #region Lifecycle Methods
 
         public AspFixtureHost()
+        {}
+
+        public void Dispose()
         {
-            //            bool bRes = WebRequest.RegisterPrefix("asptest", AspFixtureRequest.Factory);                        
-            //            RegisterAspTestPseudoProtocol();
+            GC.SuppressFinalize(this);
+            ShutDown();
+        }
+
+        private void ShutDown()
+        {
+            try
+            {
+                lock (SyncRoot)
+                {
+                    Trace.WriteLine("inside shutting down host");
+                    s_current = null;
+                    HttpRuntime.Close();
+                    HttpRuntime.UnloadAppDomain();
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Exception inside unloading HttpRuntime host:" + ex);
+            }
         }
 
         /// <summary>
@@ -207,12 +213,9 @@ namespace NUnitAspEx.Core
             }
 
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-            //AppDomain.CurrentDomain.UnhandledException+=new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
             // "redirect" http protocol
             RegisterAspTestPseudoProtocol();
-            // register our nunit extentsions in this AppDomain as well
-            RegisterNUnitAddin();
 
             // remember rootLocation
             _rootLocation = rootLocation;
@@ -225,7 +228,7 @@ namespace NUnitAspEx.Core
 
             // force HttpRuntime initialization
             StringWriter sw = new StringWriter();
-            AspFixtureWorkerRequest wr = new AspFixtureWorkerRequest(string.Empty, string.Empty, sw);
+            AspFixtureSimpleWorkerRequest wr = new AspFixtureSimpleWorkerRequest(string.Empty, string.Empty, sw);
             HttpRuntime.ProcessRequest(wr);
             if (wr.StatusCode != 200 && wr.StatusCode != 404)
             {
@@ -247,8 +250,10 @@ namespace NUnitAspEx.Core
 
         private bool AssemblyNamesEqual(string leftName, string rightName, bool ignoreVersion)
         {
-            if (leftName == null && rightName == null) return true;
-            if (leftName == null || rightName == null) return false;
+            if (leftName == null && rightName == null)
+                return true;
+            if (leftName == null || rightName == null)
+                return false;
 
             if (ignoreVersion)
             {
@@ -257,16 +262,6 @@ namespace NUnitAspEx.Core
             }
 
             return (leftName == rightName);
-        }
-
-        //		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        //		{
-        //			Trace.WriteLine("Unhandled exception occured:" + e.ExceptionObject);
-        //		}
-
-        private static void RegisterNUnitAddin()
-        {
-            NUnitAddinHelper.InstallExtensions(CoreExtensions.Host);
         }
 
         private void RegisterAspTestPseudoProtocol()
@@ -289,11 +284,11 @@ namespace NUnitAspEx.Core
 
         #region Test Execution Methods
 
-        internal AspTestClientRequest.ResponseData ProcessAspFixtureRequest(AspFixtureRequest request, byte[] requestBodyBytes)
+        internal AspFixtureRequestWorkerRequest.ResponseData ProcessAspFixtureRequest(AspFixtureRequest request, byte[] requestBodyBytes)
         {
             try
             {
-                AspTestClientRequest wr = new AspTestClientRequest(request, requestBodyBytes);
+                AspFixtureRequestWorkerRequest wr = new AspFixtureRequestWorkerRequest(request, requestBodyBytes);
                 //            // Impersonate current user
                 //            WindowsIdentity curId = WindowsIdentity.GetCurrent();
                 //            WindowsImpersonationContext ctx = curId.Impersonate();
@@ -309,53 +304,36 @@ namespace NUnitAspEx.Core
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("Failed executing AspTestClientRequest:" + ex);
+                Trace.WriteLine("Failed executing AspFixtureRequestWorkerRequest:" + ex);
                 throw;
             }
         }
 
-        /// <summary>
-        /// Creates a new TestSuite using the passed <c>fixtureType</c> and executes it immediately
-        /// </summary>
-        /// <remarks>
-        /// This method is called by <see cref="AspTestFixture.Run(EventListener,ITestFilter)"/>
-        /// </remarks>
-        internal TestResult CreateAndExecuteTestSuite(Type fixtureType, TestResult suiteResult, EventListener listener, ITestFilter filter)
+        public void Execute(TestAction action)
         {
-            lock (SyncRoot)
+            try
             {
-                if (Current == null)
+                action();
+            }
+            catch (Exception e)
+            {
+                if (!e.GetType().IsSerializable)
                 {
-                    throw new InvalidOperationException("Cannot execute fixture outside the Host's environment");
+                    throw new Exception(e.ToString());
                 }
-
-                if (filter == null)
-                {
-                    filter = TestFilter.Empty;
-                }
-
-                TestSuite testSuite = null;
-                //                try
-                //                {
-                AspTestFixtureBuilder builder = new AspTestFixtureBuilder();
-                testSuite = (TestSuite)builder.BuildFrom(fixtureType);
-                testSuite.Run(suiteResult,listener, filter);
-                //                }
-                //                catch(Exception ex)
-                //                {
-                //                    Trace.WriteLine( "Error executing TestSuite:" + ex );
-                //                    // signal suite creation failure - TODO: look for a better way!	            
-                //                    TestInfo testInfo = new TestInfo(testSuite);
-                //
-                //                    TestResult tr = new TestSuiteResult( testInfo, testSuite.TestName.FullName );
-                //                    tr.Failure("failed creating testsuite", ex.ToString());
-                //                    testResult = tr;
-                //                    testResult = new TestSuiteResult(null, ex.ToString());
-                //                }
-                return suiteResult;
+                throw;
             }
         }
 
+        public HttpWebClient CreateWebClient()
+        {
+            return new AspTestClient();
+        }
+
+        public HttpWebRequest CreateWebRequest(string virtualPath)
+        {
+            return new AspTestClient().CreateWebRequest(virtualPath);
+        }
 
         #endregion Test Execution Methods
     }

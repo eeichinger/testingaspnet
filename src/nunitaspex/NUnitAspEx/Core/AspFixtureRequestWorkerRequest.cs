@@ -7,7 +7,7 @@ using NUnitAspEx.Client;
 
 namespace NUnitAspEx.Core
 {
-    internal class AspTestClientRequest : SimpleWorkerRequest
+    internal class AspFixtureRequestWorkerRequest : SimpleWorkerRequest
     {
         internal class ResponseData
         {
@@ -20,13 +20,13 @@ namespace NUnitAspEx.Core
             public Version Version = new Version(1,1);
         }
         
-        private AspFixtureRequest _clientRequest;
-        private byte[] _requestBodyBytes;        
+        private readonly AspFixtureRequest _clientRequest;
+        private readonly byte[] _requestBodyBytes;        
         private bool _specialCaseStaticFileHeaders;
 
-        private ResponseData _responseData = new ResponseData();
+        private readonly ResponseData _responseData = new ResponseData();
         
-        public AspTestClientRequest(AspFixtureRequest clientRequest, byte[] requestBodyBytes) : base( clientRequest.RequestUri.AbsolutePath.TrimStart('/'), clientRequest.RequestUri.Query.TrimStart('?'), null)
+        public AspFixtureRequestWorkerRequest(AspFixtureRequest clientRequest, byte[] requestBodyBytes) : base( clientRequest.RequestUri.AbsolutePath.TrimStart('/'), clientRequest.RequestUri.Query.TrimStart('?'), null)
         {
             _clientRequest = clientRequest;
             _requestBodyBytes = requestBodyBytes;
