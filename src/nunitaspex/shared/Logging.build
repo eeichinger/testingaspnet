@@ -52,12 +52,12 @@
   </target>
 
   <target name="clean-obj">
-	<delete dir="src/Common/${project::get-name()}/obj" failonerror="false"/>
-	<delete dir="src/Common/${project::get-name()}/bin" failonerror="false"/>
-	<delete dir="test/Common/${project::get-name()}.Tests/obj" failonerror="false"/>
-	<delete dir="test/Common/${project::get-name()}.Tests/bin" failonerror="false"/>
-	<delete dir="test/Common/${project::get-name()}.Integration.Tests/obj" failonerror="false"/>
-	<delete dir="test/Common/${project::get-name()}.Integration.Tests/bin" failonerror="false"/>
+	<delete dir="src/${project::get-name()}/obj" failonerror="false"/>
+	<delete dir="src/${project::get-name()}/bin" failonerror="false"/>
+	<delete dir="test/${project::get-name()}.Tests/obj" failonerror="false"/>
+	<delete dir="test/${project::get-name()}.Tests/bin" failonerror="false"/>
+	<delete dir="test/${project::get-name()}.Integration.Tests/obj" failonerror="false"/>
+	<delete dir="test/${project::get-name()}.Integration.Tests/bin" failonerror="false"/>
   </target>
 
 
@@ -807,6 +807,7 @@
       <include buildfile="${user.overrides.file}"/>
     </if>
   </target>
+
   <target name="set-build-namespaces-all">
     <property name="build.allnamespaces" value="true"/>
 
@@ -826,69 +827,6 @@
       <include name="installer/**"/>
 
     </fileset>
-  </target>
-
-
-  <!-- Clover.NET code coverage targets... -->
-  <target name="CloverInit">
-    <!-- initializes the Clover environment -->
-    <echo message="Building with Clover.NET..."/>
-    <if test="${not property::exists('Clover.home')}">
-      <property name="Clover.home" value="C:\Program Files\Cenqua\Clover.NET 2.0 for .NET 1.1\"/>
-    </if>
-    <!-- 1595 - (Clover.NET workaround) 'type' is defined in multiple places; using definition from 'assembly' -->
-    <property name="nowarn.numbers" value="${nowarn.numbers},1595"/>
-    <copy todir="${Clover.home}" failonerror="false" overwrite="true">
-      <fileset basedir=".">
-        <include name="clovernet.license"/>
-      </fileset>
-    </copy>
-    <!-- Note: Using custom build CloverNant tasks -->
-    <loadtasks assembly="${Clover.home}\CloverNAnt-0.85.dll"/>
-    <clover-setup initstring="CloverBuild\clover.cdb" builddir="CloverBuild" enabled="true" flatten="false">
-      <fileset basedir=".">
-        <include name="src/**/*"/>
-        <exclude name="examples/**/*"/>
-        <exclude name="test/**/*"/>
-        <exclude name="src/Common/CommonAssemblyInfo.cs"/>
-      </fileset>
-    </clover-setup>
-  </target>
-
-  <target name="CloverClean">
-    <delete dir="CloverBuild" failonerror="false"/>
-    <!-- delete any Cloverised output lying around from previous Cloverisings -->
-    <property name="target.dir"
-              value="${project::get-base-directory()}/build/${nant.settings.currentframework}.${nant.platform.name}"/>
-    <delete
-            dir="${project::get-base-directory()}/build/${nant.settings.currentframework}.${nant.platform.name}/bin"
-            if="${directory::exists(target.dir)}"
-            failonerror="false"/>
-  </target>
-
-  <target name="CloverTest" depends="CloverInit">
-    <!-- let Clover instrument a debug build -->
-    <property name="using-clover" value="true"/>
-    <call target="set-build-namespaces-all"/>
-    <call target="set-debug-build-configuration"/>
-
-    <!-- just run clover for 1.1 -->
-    <if test="${framework::exists('net-1.1')}">
-      <call target="compile-net-1.1"/>
-    </if>
-  </target>
-  <target name="CloverReport" depends="CloverTest, CloverInit">
-    <clover-report>
-      <current title="${project.name} Code Coverage" output="report">
-        <format type="html"/>
-      </current>
-    </clover-report>
-  </target>
-  <target name="CloverAll" depends="CloverClean, CloverReport, CloverClean"
-          description="Convenience target to execute the full Clover build cycle.">
-  </target>
-  <target name="clovercruise" depends="CloverAll"
-          description="Convenience target to execute the full Clover build cycle with reporting for cruise control.">
   </target>
 
 </project>
