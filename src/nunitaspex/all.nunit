@@ -1,7 +1,0 @@
-﻿<NUnitProject>
-  <Settings activeconfig="Debug" />
-  <Config name="Debug" binpathtype="Auto">
-    <assembly path="Samples\NUnitAsp\GuestBookTests\bin\Debug\GuestBookTests.dll" />
-    <assembly path="NUnitAspExTests\bin\Debug\NUnitAspExTests.dll" />
-  </Config>
-</NUnitProject>

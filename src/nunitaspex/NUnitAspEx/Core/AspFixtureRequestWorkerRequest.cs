@@ -3,12 +3,12 @@ using System.IO;
 using System.Net;
 using System.Web;
 using System.Web.Hosting;
-using NUnitAspEx.Client;
 
 namespace NUnitAspEx.Core
 {
     internal class AspFixtureRequestWorkerRequest : SimpleWorkerRequest
     {
+        [Serializable]
         internal class ResponseData
         {
             public bool HeadersSent;
@@ -20,13 +20,13 @@ namespace NUnitAspEx.Core
             public Version Version = new Version(1,1);
         }
         
-        private readonly AspFixtureRequest _clientRequest;
+        private readonly HttpWebRequest _clientRequest;
         private readonly byte[] _requestBodyBytes;        
         private bool _specialCaseStaticFileHeaders;
 
         private readonly ResponseData _responseData = new ResponseData();
         
-        public AspFixtureRequestWorkerRequest(AspFixtureRequest clientRequest, byte[] requestBodyBytes) : base( clientRequest.RequestUri.AbsolutePath.TrimStart('/'), clientRequest.RequestUri.Query.TrimStart('?'), null)
+        public AspFixtureRequestWorkerRequest(HttpWebRequest clientRequest, byte[] requestBodyBytes) : base( clientRequest.RequestUri.AbsolutePath.TrimStart('/'), clientRequest.RequestUri.Query.TrimStart('?'), null)
         {
             _clientRequest = clientRequest;
             _requestBodyBytes = requestBodyBytes;

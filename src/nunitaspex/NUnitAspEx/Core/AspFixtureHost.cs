@@ -34,6 +34,13 @@ namespace NUnitAspEx.Core
             return CreateInstance(virtualPath, relativePhysicalPath, testFixture.GetType().Assembly.CodeBase);
         }
 
+        public static IAspFixtureHost ReleaseInstance(IAspFixtureHost host)
+        {
+            AspFixtureRequest.Factory.Host = null;
+            host.Dispose();
+            return null;
+        }
+
         /// <summary>
         /// Creates a new Host instance within a new AppDomain based on the passed in Properties.
         /// </summary>
@@ -93,6 +100,10 @@ namespace NUnitAspEx.Core
 				};
 
             _host.Initialize(currentDir, AppDomain.CurrentDomain, Console.Out, preloadAssemblies);
+
+            AspFixtureRequest.AspFixtureRequestFactory factory = AspFixtureRequest.Factory;
+            WebRequest.RegisterPrefix("asptest", factory);
+            factory.Host = _host;
             return _host;
         }
 
@@ -269,9 +280,10 @@ namespace NUnitAspEx.Core
             try
             {
                 // inside host, redirect all "http"-protocol requests
-                IWebRequestCreate factory = AspFixtureRequest.Factory;
+                AspFixtureRequest.AspFixtureRequestFactory factory = AspFixtureRequest.Factory;
                 WebRequest.RegisterPrefix("http", factory);
                 WebRequest.RegisterPrefix("asptest", factory);
+                factory.Host = this;
                 Trace.WriteLine("Registered asptest prefix");
             }
             catch (Exception ex)
@@ -284,7 +296,7 @@ namespace NUnitAspEx.Core
 
         #region Test Execution Methods
 
-        internal AspFixtureRequestWorkerRequest.ResponseData ProcessAspFixtureRequest(AspFixtureRequest request, byte[] requestBodyBytes)
+        internal AspFixtureRequestWorkerRequest.ResponseData ProcessAspFixtureRequest(HttpWebRequest request, byte[] requestBodyBytes)
         {
             try
             {
