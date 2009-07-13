@@ -1,3 +1,4 @@
+using System;
 using NUnitAspEx.Client;
 
 namespace NUnitAspEx
@@ -5,10 +6,9 @@ namespace NUnitAspEx
 	/// <summary>
 	/// Summary description for AspTestClient.
 	/// </summary>
-	public class AspTestClient : HttpWebClient
+	internal class AspTestClient : HttpWebClient
 	{
 		public AspTestClient() : base("asptest://aspfixturehost")
-		{
-		}
+		{}
 	}
 }

@@ -7,11 +7,11 @@ using System.Text;
 
 namespace NUnitAspEx.Client
 {
-	/// <summary>
-	/// Summary description for HttpWebClient.
-	/// </summary>
-	public class HttpWebClient
-	{
+    /// <summary>
+    /// Summary description for HttpWebClient.
+    /// </summary>
+    public class HttpWebClient : MarshalByRefObject
+    {
         // Fields
         private const int DefaultCopyBufferLength = 0x2000;
         private const int DefaultDownloadBufferLength = 0x10000;
@@ -21,16 +21,16 @@ namespace NUnitAspEx.Client
         private WebHeaderCollection m_headers = new WebHeaderCollection();
         private NameValueCollection m_requestParameters;
         private WebHeaderCollection m_responseHeaders;
-	    private Uri m_responseUri;
-	    private CookieContainer m_cookieContainer = new CookieContainer();
-	    private const string UploadFileContentType = "multipart/form-data";
+        private Uri m_responseUri;
+        private CookieContainer m_cookieContainer = new CookieContainer();
+        private const string UploadFileContentType = "multipart/form-data";
         private const string UploadValuesContentType = "application/x-www-form-urlencoded";
-	    
-        public HttpWebClient( string baseAddress )
+
+        public HttpWebClient(string baseAddress)
         {
             m_baseAddress = new Uri(baseAddress);
         }
-	    
+
         private void CopyHeadersTo(WebRequest request)
         {
             if ((this.m_headers != null) && (request is HttpWebRequest))
@@ -50,31 +50,31 @@ namespace NUnitAspEx.Client
                 request.Headers = this.m_headers;
                 if ((accept != null) && (accept.Length > 0))
                 {
-                    ((HttpWebRequest) request).Accept = accept;
+                    ((HttpWebRequest)request).Accept = accept;
                 }
                 if ((connection != null) && (connection.Length > 0))
                 {
-                    ((HttpWebRequest) request).Connection = connection;
+                    ((HttpWebRequest)request).Connection = connection;
                 }
                 if ((contentType != null) && (contentType.Length > 0))
                 {
-                    ((HttpWebRequest) request).ContentType = contentType;
+                    ((HttpWebRequest)request).ContentType = contentType;
                 }
                 if ((expect != null) && (expect.Length > 0))
                 {
-                    ((HttpWebRequest) request).Expect = expect;
+                    ((HttpWebRequest)request).Expect = expect;
                 }
                 if ((referer != null) && (referer.Length > 0))
                 {
-                    ((HttpWebRequest) request).Referer = referer;
+                    ((HttpWebRequest)request).Referer = referer;
                 }
                 if ((userAgent != null) && (userAgent.Length > 0))
                 {
-                    ((HttpWebRequest) request).UserAgent = userAgent;
+                    ((HttpWebRequest)request).UserAgent = userAgent;
                 }
             }
-        }	
-	    
+        }
+
         private Uri GetUri(string path)
         {
             try
@@ -108,7 +108,7 @@ namespace NUnitAspEx.Client
                 return new Uri(Path.GetFullPath(path));
             }
         }
-	    
+
         public string BaseAddress
         {
             get
@@ -138,7 +138,7 @@ namespace NUnitAspEx.Client
                 }
             }
         }
-	    
+
         public WebHeaderCollection Headers
         {
             get
@@ -154,7 +154,7 @@ namespace NUnitAspEx.Client
                 this.m_headers = value;
             }
         }
-	    
+
         public NameValueCollection QueryString
         {
             get
@@ -170,7 +170,7 @@ namespace NUnitAspEx.Client
                 this.m_requestParameters = value;
             }
         }
- 	    
+
         public CookieContainer CookieContainer
         {
             get
@@ -182,7 +182,7 @@ namespace NUnitAspEx.Client
                 this.m_cookieContainer = value;
             }
         }
-	    
+
         public ICredentials Credentials
         {
             get
@@ -194,7 +194,7 @@ namespace NUnitAspEx.Client
                 this.m_credentials = value;
             }
         }
-	    
+
         public WebHeaderCollection ResponseHeaders
         {
             get
@@ -203,61 +203,60 @@ namespace NUnitAspEx.Client
             }
         }
 
-	    public Uri ResponseUri
-	    {
-	        get { return m_responseUri; }
-	    }
+        public Uri ResponseUri
+        {
+            get { return m_responseUri; }
+        }
 
-	    public string GetPage( string address )
-	    {
-	        HttpWebResponse resp = GetResponse( address, "text/html" );
-	        string charset = resp.CharacterSet;
-	        
-	        Encoding enc = null;
-	        if (charset != null && charset.Length > 0)
-	        {
-	            try
-	            {
-	                enc = Encoding.GetEncoding(charset);
-	            }
-	            catch
-	            {
-	            }
-	        }
-	        
-	        StreamReader sr;
-	        if (enc != null)
-	        {
-	            sr = new StreamReader( resp.GetResponseStream(), enc );
-	        }
-	        else
-	        {
-	            sr = new StreamReader( resp.GetResponseStream(), true );
-	        }
+        public string GetPage(string address)
+        {
+            HttpWebResponse resp = GetResponse(address, "text/html");
+            string charset = resp.CharacterSet;
 
-	        using(sr)
-	        {
-	            return sr.ReadToEnd();
-	        }
-	    }
-	    
-	    public HttpWebResponse GetResponse(string address, string mediaType)
+            Encoding enc = null;
+            if (charset != null && charset.Length > 0)
+            {
+                try
+                {
+                    enc = Encoding.GetEncoding(charset);
+                }
+                catch
+                {
+                }
+            }
+
+            StreamReader sr;
+            if (enc != null)
+            {
+                sr = new StreamReader(resp.GetResponseStream(), enc);
+            }
+            else
+            {
+                sr = new StreamReader(resp.GetResponseStream(), true);
+            }
+
+            using (sr)
+            {
+                return sr.ReadToEnd();
+            }
+        }
+
+        public HttpWebResponse GetResponse(string virtualPath, string mediaType)
         {
             try
             {
                 this.m_responseHeaders = null;
-                Uri requestUri = this.GetUri(address);
-                HttpWebRequest request1 = (HttpWebRequest)WebRequest.Create(requestUri);
+                HttpWebRequest request1 = CreateWebRequest(virtualPath);
                 request1.MediaType = mediaType;
                 request1.Credentials = this.Credentials;
                 request1.CookieContainer = this.m_cookieContainer;
                 this.CopyHeadersTo(request1);
-                HttpWebResponse response1 = (HttpWebResponse)request1.GetResponse();                
+                HttpWebResponse response1 = (HttpWebResponse)request1.GetResponse();
                 if (this.m_headers != null)
                 {
-                    m_headers["Referer"] = requestUri.ToString();
+                    m_headers["Referer"] = request1.RequestUri.ToString(); //  requestUri.ToString()
                 }
-                this.m_responseHeaders = response1.Headers;                
+                this.m_responseHeaders = response1.Headers;
                 this.m_responseUri = response1.ResponseUri;
                 return response1;
             }
@@ -269,6 +268,12 @@ namespace NUnitAspEx.Client
                 }
                 throw;
             }
-        }	    
-	}
+        }
+
+        public HttpWebRequest CreateWebRequest(string virtualPath)
+        {
+            Uri requestUri = this.GetUri(virtualPath);
+            return (HttpWebRequest)WebRequest.Create(requestUri);
+        }
+    }
 }

@@ -67,15 +67,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.core, Version=2.5.0.9122, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\nunit.core.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.core.interfaces">
-      <Name>nunit.core.interfaces</Name>
-      <HintPath>..\lib\nunit.core.interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\lib\nunit.framework.dll</HintPath>
@@ -104,28 +95,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AspFixtureNonRootedRuntimeEnvironmentTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AspFixtureRootedRuntimeEnvironmentTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AspFixtureRuntimeEnvironmentTestsBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="AspTestClientTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AspTestWithinHostBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AspTestWithinNonRootedHost.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AspTestWithinRootedHost.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MyNUnitAddinHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="TestWebs\Test1\testpage.aspx" />
