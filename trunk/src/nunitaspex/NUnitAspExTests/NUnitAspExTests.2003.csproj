@@ -87,12 +87,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\NUnitAspEx\NUnitAspEx.2003.csproj">
-      <Name>NUnitAspEx</Name>
-      <Project>{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AspTestClientTests.cs">
@@ -129,6 +123,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NUnitAspEx\NUnitAspEx.2003.csproj">
+      <Project>{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}</Project>
+      <Name>NUnitAspEx.2003</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

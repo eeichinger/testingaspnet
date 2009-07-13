@@ -3,12 +3,14 @@ using NUnit.Extensions.Asp;
 using NUnit.Extensions.Asp.AspTester;
 using NUnit.Framework;
 using NUnitAspEx;
+using NUnitAspEx.Core;
 
 namespace GuestBookTests
 {
-    [AspTestFixture(VirtualPath = "/", RelativePhysicalPath = "../../../GuestBook")]
     public class GuestBookTestSuite : WebFormTestCase
     {
+        private IAspFixtureHost host;
+
         private TextBoxTester name;
         private TextBoxTester comments;
         private ButtonTester save;
@@ -21,14 +23,23 @@ namespace GuestBookTests
 
         protected override void SetUp()
         {
+            base.SetUp();
+
             name = new TextBoxTester("name", CurrentWebForm);
             comments = new TextBoxTester("comments", CurrentWebForm);
             save = new ButtonTester("save", CurrentWebForm);
             book = new DataGridTester("book", CurrentWebForm);
 
+            host = AspFixtureHost.CreateInstance("/", "../../../GuestBook", this);
             // note new pseudo-protocol "asptest" here:
             //Browser.GetPage("http://localhost/NUnitAsp/sample/tutorial/GuestBook/GuestBook.aspx");
             Browser.GetPage("asptest://localhost/GuestBook.aspx");
+        }
+
+        protected override void TearDown()
+        {
+            AspFixtureHost.ReleaseInstance(host); host = null;
+            base.TearDown();
         }
 
         [Test]
@@ -52,7 +63,7 @@ namespace GuestBookTests
 			{
 				new string[] {"Dr. Seuss", "One Guest, Two Guest!  Guest Book, Best Book!"}
 			};
-            AssertEquals("book", expected, book.TrimmedCells);
+            AssertEquals("book", expected, book.Cells);
         }
 
         [Test]
@@ -66,7 +77,7 @@ namespace GuestBookTests
 				new string[] {"Dr. Seuss", "One Guest, Two Guest!  Guest Book, Best Book!"},
 				new string[] {"Dr. Freud", "That's quite a slip you have there."}
 			};
-            AssertEquals("book", expected, book.TrimmedCells);
+            AssertEquals("book", expected, book.Cells);
         }
 
         private void SignGuestBook(string nameToSign, string commentToSign)

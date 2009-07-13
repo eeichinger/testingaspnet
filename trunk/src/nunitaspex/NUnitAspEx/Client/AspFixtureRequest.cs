@@ -12,24 +12,36 @@ namespace NUnitAspEx.Client
     {
         #region IWebRequestCreate Factory Implementation
 
-        private class AspFixtureRequestFactory : IWebRequestCreate
+        public class AspFixtureRequestFactory : IWebRequestCreate
         {
+            public AspFixtureHost Host;
+
             public WebRequest Create(Uri uri)
             {
-                return new AspFixtureRequest(uri);
+                return new AspFixtureRequest(Host, uri);
             }
-        }
-
-        private static readonly IWebRequestCreate s_factory = new AspFixtureRequestFactory();
-        public static IWebRequestCreate Factory
-        {
-            get { return s_factory; }
         }
 
         #endregion IWebRequestCreate Factory Implementation
 
-        public AspFixtureRequest(Uri uri) : base( uri )
-        {}
+        private static readonly AspFixtureRequestFactory s_factory;
+
+        static AspFixtureRequest()
+        {
+            s_factory = new AspFixtureRequestFactory();
+        }
+
+        public static AspFixtureRequestFactory Factory
+        {
+            get { return s_factory; }
+        }
+
+        private readonly AspFixtureHost _host;
+
+        private AspFixtureRequest(AspFixtureHost host, Uri uri) : base( uri )
+        {
+            _host = host;
+        }
         
         protected override void SubmitRequest(byte[] headerBytes, Stream outputStream)
         {
@@ -39,8 +51,7 @@ namespace NUnitAspEx.Client
             byte[] bodyPayload = ((MemoryStream)outputStream).ToArray();
 
             // execute request against current fixture host
-            AspFixtureHost host = AspFixtureHost.Current;
-            AspFixtureRequestWorkerRequest.ResponseData rp = host.ProcessAspFixtureRequest( this, bodyPayload );
+            AspFixtureRequestWorkerRequest.ResponseData rp = _host.ProcessAspFixtureRequest( this, bodyPayload );
             
             HttpWebResponse response = new AspFixtureResponse( this.Uri, this.Verb, rp.Headers, rp.Version, rp.StatusCode, rp.StatusDescription, this.MediaType, rp.ContentLength, false, rp.Stream );
             

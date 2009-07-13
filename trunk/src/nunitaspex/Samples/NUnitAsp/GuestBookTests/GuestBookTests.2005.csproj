@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{77B6D875-67C3-440D-AF04-A6B726EFE92C}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -52,10 +52,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.core.interfaces, Version=2.4.1.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\nunit.core.interfaces.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\lib\nunit.framework.dll</HintPath>
@@ -73,15 +69,16 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\..\NUnitAspEx\NUnitAspEx.2005.csproj">
-      <Name>NUnitAspEx.2005</Name>
-      <Project>{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GuestBookTestSuite.cs" />
-    <Compile Include="NUnitAddinHelper.cs" />
+    <Compile Include="NUnitAdapter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NUnitAspEx\NUnitAspEx.2003.csproj">
+      <Project>{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}</Project>
+      <Name>NUnitAspEx.2003</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
