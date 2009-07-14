@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<project xmlns="http://nant.sf.net/schemas/nant.xsd"
+	name="NUnitAspEx" default="build">
+
+	<!-- echo message="NUnitAspEx Source" / -->
+
+    <include buildfile="${solution.basedir}/shared/common-project.include" verbose="true" />
+
+    <target name="build" depends="common.init">
+        <!-- property name="project.name" value="${project::get-name()}" overwrite="true" / -->
+
+<!--
+        <patternset id="project.references.additional">
+            <include name="nunit.framework.dll" />
+            <include name="NUnitAsp.dll" />
+        </patternset>
+-->
+        <call target="common.compile-dll" />
+    </target>
+</project>
