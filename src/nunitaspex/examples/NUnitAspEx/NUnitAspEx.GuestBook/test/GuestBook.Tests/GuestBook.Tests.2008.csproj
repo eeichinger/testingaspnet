@@ -28,7 +28,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == '2.0|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -75,7 +75,7 @@
     <Compile Include="NUnitAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\NUnitAspEx\NUnitAspEx.2008.csproj">
+    <ProjectReference Include="..\..\..\..\..\src\NUnitAspEx\NUnitAspEx.2008.csproj">
       <Project>{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}</Project>
       <Name>NUnitAspEx.2008</Name>
     </ProjectReference>
