@@ -158,14 +158,10 @@ ${current.build.defines}
             <resources refid="project.resources" />
         </csc>
 
-<!--
+        <!-- copy app.config -->
         <if test="${file::exists(project::get-base-directory() + '/app.config')}">
             <copy file="${project::get-base-directory()}/app.config" tofile="${current.bin.dir}/${project::get-name()}.dll.config" />
-                </if>
--->
-        <!-- copy app.config -->
-        <copy file="${project::get-base-directory()}/app.config"
-              tofile="${current.bin.dir}/${project::get-name()}.dll.config" failonerror="false"/>
+        </if>
 
         <!-- copy 'TestData' directory -->
         <copy todir="${current.bin.dir}/TestData" failonerror="false">
@@ -187,7 +183,7 @@ ${tool.dir}       : dir for tools
     -->
     <target name="common.run-tests">
 
-      <call target="common.run-tests.ncover" />
+      <call target="common.run-tests.nunit" />
 
     </target>
 
@@ -205,16 +201,18 @@ ${tool.dir}       : dir for tools
     <!-- property name="project.name" value="${project::get-name()}" overwrite="false" / -->
     <property name="compile.bin.dir" value="${current.bin.dir}" if="${not property::exists('compile.bin.dir')}" />
 
-    <echo message="Unit Testing ${project.name} in ${compile.bin.dir}" />
+    <echo message="Unit Testing ${project.name}.Tests.dll in ${compile.bin.dir}" />
 
-    <exec program="${tool.dir}\nunit\nunit-console-x86.exe" workingdir="${compile.bin.dir}" verbose="true">
+    <copy file="${compile.bin.dir}/${project.name}.Tests.dll.config" tofile="${compile.bin.dir}/${project.name}.Tests.config" failonerror="false" />
+
+    <exec program="${tool.dir}\nunit\net-2.0\nunit-console-x86.exe" workingdir="${compile.bin.dir}" verbose="true">
       <arg path="${compile.bin.dir}/${project.name}.Tests.dll" />
+      <arg value="/framework:${nant.settings.currentframework}" />
       <arg value="/xml:${project.name}.dll-testresults.xml" />
       <arg value="/noshadow" />
       <arg value="/nothread" />
       <arg value="/domain=Multiple" />
-      <arg value="/process=Single" />
-      <arg value="/framework=${nant.settings.currentframework}" />
+      <arg value="/process=Default" />
     </exec>
 
   </target>
@@ -233,7 +231,7 @@ ${tool.dir}       : dir for tools
 		<!-- property name="project.name" value="${project::get-name()}" overwrite="false" / -->
         <property name="compile.bin.dir" value="${current.bin.dir}" if="${not property::exists('compile.bin.dir')}" />
 
-        <echo message="Coverage Testing ${project.name} in ${compile.bin.dir}" />
+        <echo message="Coverage Testing ${project.name}.Tests.dll in ${compile.bin.dir}" />
 
 		<exec program="${tool.dir}/ncover/ncover.console.exe" workingdir="${compile.bin.dir}">
 			<arg value="//q" />
@@ -247,9 +245,9 @@ ${tool.dir}       : dir for tools
             <arg value="//ea" />
             <arg value="CoverageExcludeAttribute" />
 			<arg value="//q" />
-			<arg path="${tool.dir}/nunit/nunit-console-x86.exe" />
+			<arg path="${tool.dir}/nunit/net-2.0/nunit-console-x86.exe" />
 			<arg path="${compile.bin.dir}/${project.name}.Tests.dll" />
-			<arg value="/xml:&quot;${compile.bin.dir}/${project.name}.Tests.dll-TestResults.xml&quot;" />
+			<arg value="/xml=&quot;${compile.bin.dir}/${project.name}.Tests.dll-TestResults.xml&quot;" />
 			<arg value="/nologo" />
               <arg value="/noshadow" />
               <arg value="/nothread" />

@@ -24,6 +24,12 @@ namespace NUnitAspExTests
         }
 
         [Test]
+        public void CanReadAppConfig()
+        {
+            Assert.AreEqual("SomeValue", System.Configuration.ConfigurationSettings.AppSettings["SomeKey"]);
+        }
+
+        [Test]
         public void ClientExecutesPageInHost()
         {
             // use static method to avoid passing a reference to ourselves to the host domain
@@ -31,7 +37,7 @@ namespace NUnitAspExTests
         }
 
         // this code is executed entirely within the web application domain
-        private static void ClientExecutesPageInHostImpl()
+        public static void ClientExecutesPageInHostImpl()
         {
             IAspFixtureHost host = AspTestContext.Host;
             Assert.IsNotNull(host);
@@ -47,7 +53,7 @@ namespace NUnitAspExTests
             content = clnt.GetPage("/testpage.aspx?testparam=testvalue").Trim();
             // request parameters are evaluated?
             Assert.AreEqual("testparam=testvalue", content);
-            // session is maintained during requests?            
+            // session is maintained during requests?
             Assert.AreEqual("testvalue", AspTestContext.HttpContext.Session["testkey"]);
         }
 
