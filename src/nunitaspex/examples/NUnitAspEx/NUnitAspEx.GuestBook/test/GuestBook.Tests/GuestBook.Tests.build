@@ -23,7 +23,7 @@
     </target>
 
     <target name="test" depends="build">
-        <property name="compile.bin.dir" value="./bin/debug" overwrite="true" />
+        <property name="compile.bin.dir" value="${project::get-base-directory()}/bin/debug" overwrite="true" />
         <call target="common.run-tests" />
     </target>
 

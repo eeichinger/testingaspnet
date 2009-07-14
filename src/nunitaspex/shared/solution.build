@@ -1,8 +1,6 @@
 <?xml version="1.0" ?>
 <project xmlns="http://nant.sf.net/schemas/nant.xsd">
 
-  <echo message="Logging.build" />
-
   <!-- make system environment variables available as NAnt properties -->
   <sysinfo/>
 
@@ -457,23 +455,23 @@
 
   <target name="build-all-function" description="Build what is in cvs taking into account approrpiate clr versions and root target name">
 
-    <exec workingdir="." program="cmd.exe" commandline="/c nant -D:project.build.package=${project.build.package} ${nant.target.root.name}-1.0" if="${compile-net-1.0}">
-      <environment>
-        <variable name="COMPlus_version" value="v1.0.3705"/>
-      </environment>
-    </exec>
-
+    <call target="${nant.target.root.name}-1.1" if="${compile-net-1.1}" />
+<!--
     <exec workingdir="." program="cmd.exe" commandline="/c nant  -D:project.build.package=${project.build.package} ${nant.target.root.name}-1.1" if="${compile-net-1.1}">
       <environment>
         <variable name="COMPlus_version" value="v1.1.4322"/>
       </environment>
     </exec>
+-->
 
+    <call target="${nant.target.root.name}-2.0" if="${compile-net-2.0}" />
+<!--
     <exec workingdir="." program="cmd.exe" commandline="/c nant  -D:project.build.package=${project.build.package} ${nant.target.root.name}-2.0" if="${compile-net-2.0}">
       <environment>
         <variable name="COMPlus_version" value="v2.0.50727"/>
       </environment>
     </exec>
+-->
   </target>
 
   <!-- Target to use when packaging everything in CVS -->

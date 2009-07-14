@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <project xmlns="http://nant.sf.net/schemas/nant.xsd">
-	<echo message="Logging.include" />
 
 <!-- force net-2.0 to be default -->
 	<property name="nant.settings.currentframework" value="net-2.0"/>

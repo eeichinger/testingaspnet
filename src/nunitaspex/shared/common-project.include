@@ -187,7 +187,7 @@ ${tool.dir}       : dir for tools
     -->
     <target name="common.run-tests">
 
-      <call target="common.run-tests.nunit" />
+      <call target="common.run-tests.ncover" />
 
     </target>
 
@@ -202,12 +202,12 @@ ${tool.dir}       : dir for tools
     -->
   <target name="common.run-tests.nunit">
 
-    <property name="project.name" value="${project::get-name()}" overwrite="false" />
+    <!-- property name="project.name" value="${project::get-name()}" overwrite="false" / -->
     <property name="compile.bin.dir" value="${current.bin.dir}" if="${not property::exists('compile.bin.dir')}" />
 
     <echo message="Unit Testing ${project.name} in ${compile.bin.dir}" />
 
-    <exec program="${tool.dir}\nunit\nunit-console-x86.exe" workingdir="${compile.bin.dir}">
+    <exec program="${tool.dir}\nunit\nunit-console-x86.exe" workingdir="${compile.bin.dir}" verbose="true">
       <arg path="${compile.bin.dir}/${project.name}.Tests.dll" />
       <arg value="/xml:${project.name}.dll-testresults.xml" />
       <arg value="/noshadow" />
@@ -230,25 +230,32 @@ ${tool.dir}       : dir for tools
     -->
     <target name="common.run-tests.ncover" description="Run NUnit tests">
 
-		<property name="project.name" value="${project::get-name()}" overwrite="false" />
-		<echo message="Coverage Testing ${project.name}" />
+		<!-- property name="project.name" value="${project::get-name()}" overwrite="false" / -->
+        <property name="compile.bin.dir" value="${current.bin.dir}" if="${not property::exists('compile.bin.dir')}" />
 
-		<exec program="${tool.dir}/ncover/ncover.console.exe" workingdir="${current.bin.dir}">
+        <echo message="Coverage Testing ${project.name} in ${compile.bin.dir}" />
+
+		<exec program="${tool.dir}/ncover/ncover.console.exe" workingdir="${compile.bin.dir}">
 			<arg value="//q" />
 			<arg value="//reg" />
 			<arg value="//w" />
-			<arg path="${current.bin.dir}" />
+			<arg path="${compile.bin.dir}" />
 			<arg value="//x" />
-			<arg path="${current.bin.dir}/${project.name}.dll-TestCoverage.xml" />
+			<arg path="${compile.bin.dir}/${project.name}.Tests.dll-TestCoverage.xml" />
 			<arg value="//a" />
-			<arg value="${string::substring(project.name,0,string::last-index-of(project.name, '.Tests') )}" />
+			<arg value="${project.name}" />
             <arg value="//ea" />
             <arg value="CoverageExcludeAttribute" />
 			<arg value="//q" />
 			<arg path="${tool.dir}/nunit/nunit-console-x86.exe" />
-			<arg path="${current.bin.dir}/${project.name}.dll" />
-			<arg value="/xml:&quot;${current.bin.dir}/${project.name}.dll-TestResults.xml&quot;" />
+			<arg path="${compile.bin.dir}/${project.name}.Tests.dll" />
+			<arg value="/xml:&quot;${compile.bin.dir}/${project.name}.Tests.dll-TestResults.xml&quot;" />
 			<arg value="/nologo" />
+              <arg value="/noshadow" />
+              <arg value="/nothread" />
+              <arg value="/domain=Multiple" />
+              <arg value="/process=Single" />
+              <arg value="/framework=${nant.settings.currentframework}" />
 		</exec>
 
 <!--

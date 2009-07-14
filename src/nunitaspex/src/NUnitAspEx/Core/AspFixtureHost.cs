@@ -55,11 +55,13 @@ namespace NUnitAspEx.Core
             }
 
             string currentDir = new FileInfo(new Uri(rootLocation).LocalPath).DirectoryName; //AppDomain.CurrentDomain.BaseDirectory;
-            Trace.WriteLine("Creating AspFixtureHost instance at " + currentDir);
 
             // setup up target directory
             string physicalHostDir = currentDir.TrimEnd('\\', '/') + "\\" + relativePhysicalPath.Trim('\\', '/') + "\\";
             physicalHostDir = new DirectoryInfo(physicalHostDir).FullName.TrimEnd('\\') + "\\";
+
+            Trace.WriteLine("Creating AspFixtureHost instance at " + physicalHostDir);
+
             string physicalHostBinDir = physicalHostDir + "bin\\";
 
             // copy all files from current build output directory to <webroot>/bin
