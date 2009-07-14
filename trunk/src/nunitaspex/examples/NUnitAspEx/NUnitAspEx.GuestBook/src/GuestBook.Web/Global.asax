@@ -1,1 +1,1 @@
-<%@ Application Codebehind="Global.asax.cs" Inherits="GuestBook.Global" %>
+<%@ Application Src="Global.asax.cs" Inherits="GuestBook.Global" %>

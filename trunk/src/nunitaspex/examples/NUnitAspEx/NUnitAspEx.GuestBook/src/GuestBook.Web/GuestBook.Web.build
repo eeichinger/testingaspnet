@@ -12,6 +12,11 @@
         </patternset>
 -->
 
+<!-- noop -->
+        <fileset id="project.sources" failonempty="false">
+            <include name="Properties/AssemblyInfo.cs" />
+        </fileset>
+
         <call target="common.compile-dll" />
     </target>
 

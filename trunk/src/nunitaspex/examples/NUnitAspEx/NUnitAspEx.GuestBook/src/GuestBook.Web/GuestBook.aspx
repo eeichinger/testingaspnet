@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="GuestBook.aspx.cs" AutoEventWireup="false" Inherits="GuestBook.GuestBook" %>
+<%@ Page language="c#" Src="GuestBook.aspx.cs" AutoEventWireup="false" Inherits="GuestBook.GuestBook" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <HTML>
   <HEAD>
