@@ -11,6 +11,7 @@
     <include buildfile="${logging.basedir}/shared/common-project.include" verbose="true" />
 
     <target name="build">
+        <!-- compile everything -->
         <csc target="library" define="${current.build.defines.csc}"
              warnaserror="true"
              optimize="${build.optimize}"
@@ -30,8 +31,16 @@
             </references>
         </csc>
 
+        <!-- copy app.config -->
         <copy file="${project::get-base-directory()}/app.config"
               tofile="${current.bin.dir}/${project::get-name()}.dll.config"/>
+
+        <!-- copy 'TestData' directory -->
+        <copy todir="${current.bin.dir}/TestData">
+          <fileset basedir="${project::get-base-directory()}/TestData">
+            <include name="**/*.*"/>
+          </fileset>
+        </copy>
     </target>
 
     <target name="test" depends="build">

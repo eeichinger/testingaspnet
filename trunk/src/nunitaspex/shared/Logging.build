@@ -183,23 +183,6 @@
 
   </target>
 
-  <target name="compile-build-1.0" description="Builds for .NET 1.0 if available">
-    <property name="compile-net-1.0" value="true" unless="${property::exists('compile-net-1.0')}"/>
-
-    <if test="${framework::exists('net-1.0') and compile-net-1.0}">
-      <call target="compile-net-1.0"/>
-    </if>
-
-    <if test="${not framework::exists('net-1.0')}">
-      <if test="${property::exists('project.build.package') and project.build.package}">
-        <fail message="The .NET Framework 1.0 is not available."/>
-      </if>
-      <if test="${not(property::exists('project.build.package') and project.build.package)}">
-        <echo message="The .NET Framework 1.0 is not available. Build skipped."/>
-      </if>
-    </if>
-  </target>
-
   <target name="compile-build-1.1" description="Builds for .NET 1.1 if available">>
     <property name="compile-net-1.1" value="true" unless="${property::exists('compile-net-1.1')}"/>
 
@@ -254,7 +237,7 @@
       <!-- build source -->
       <nant buildfile="src/${project.name}/${project.name}.build" target="build"/>
       <!-- build examples -->
-      <nant buildfile="examples/${project.name}.Example.build" target="build" if="${build-examples}"/>
+      <nant buildfile="examples/${project.name}/${project.name}.Examples.build" target="build" if="${build-examples}"/>
       <!-- build unit tests -->
       <nant buildfile="test/${project.name}.Tests/${project.name}.Tests.build" target="test" if="${build-tests}"/>
       <!-- build integration tests -->
@@ -275,7 +258,7 @@
       <!-- build source -->
       <nant buildfile="src/${project.name}/${project.name}.build" target="build"/>
       <!-- build examples -->
-      <nant buildfile="examples/${project.name}.Example.build" target="build" if="${build-examples}"/>
+      <nant buildfile="examples/${project.name}/${project.name}.Examples.build" target="build" if="${build-examples}"/>
       <!-- build unit tests -->
       <nant buildfile="test/${project.name}.Tests/${project.name}.Tests.build" target="test" if="${build-tests}"/>
       <!-- build integration tests -->
