@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<project name="GuestBook.Web" default="build" xmlns="http://nant.sf.net/schemas/nant.xsd">
+    <include buildfile="${solution.basedir}/shared/common-project.include" verbose="true" />
+
+    <target name="build" depends="common.init">
+        <property name="compile.bin.dir" value="./bin" overwrite="true" />
+
+<!--
+        <patternset id="project.references.additional">
+            <include name="nunit.framework.dll" />
+            <include name="NUnitAsp.dll" />
+        </patternset>
+-->
+
+<!-- noop -->
+        <fileset id="project.sources" failonempty="false">
+            <include name="Properties/AssemblyInfo.cs" />
+        </fileset>
+
+        <call target="common.compile-dll" />
+    </target>
+
+</project>

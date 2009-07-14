@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspEx.2008", "..\..\..\src\NUnitAspEx\NUnitAspEx.2008.csproj", "{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspEx.Tests.2008", "..\..\..\test\NUnitAspEx.Tests\NUnitAspEx.Tests.2008.csproj", "{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook.Web.2008", "src\GuestBook.Web\GuestBook.Web.2008.csproj", "{719EA919-682E-4171-8D5A-F527A2C2DD3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook.Tests.2008", "test\GuestBook.Tests\GuestBook.Tests.2008.csproj", "{77B6D875-67C3-440D-AF04-A6B726EFE92C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{424AC009-6EA4-4FED-9FC2-5993695AF357}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GuestBook", "GuestBook", "{753AF993-0D75-4FCC-AA1D-386B1B9D4DD3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{719EA919-682E-4171-8D5A-F527A2C2DD3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{719EA919-682E-4171-8D5A-F527A2C2DD3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77B6D875-67C3-440D-AF04-A6B726EFE92C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77B6D875-67C3-440D-AF04-A6B726EFE92C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{753AF993-0D75-4FCC-AA1D-386B1B9D4DD3} = {424AC009-6EA4-4FED-9FC2-5993695AF357}
+		{719EA919-682E-4171-8D5A-F527A2C2DD3F} = {753AF993-0D75-4FCC-AA1D-386B1B9D4DD3}
+		{77B6D875-67C3-440D-AF04-A6B726EFE92C} = {753AF993-0D75-4FCC-AA1D-386B1B9D4DD3}
+	EndGlobalSection
+EndGlobal

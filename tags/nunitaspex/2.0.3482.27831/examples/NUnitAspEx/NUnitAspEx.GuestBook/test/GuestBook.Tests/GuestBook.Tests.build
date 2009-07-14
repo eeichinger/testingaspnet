@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<project xmlns="http://nant.sf.net/schemas/nant.xsd"
+         name="GuestBook.Tests" default="test">
+
+    <!--
+        Required properties:
+            * current.bin.dir           - (path) root level to build to
+            * current.build.defines.csc - framework-specific build defines
+            * current.build.debug               - (true|false) debug build?
+    -->
+    <include buildfile="${solution.basedir}/shared/common-project.include" verbose="true" />
+
+    <target name="build" depends="common.init">
+        <property name="compile.bin.dir" value="./bin/debug" overwrite="true" />
+        <!-- property name="project.name" value="${project::get-name()}" overwrite="true" / -->
+
+        <patternset id="project.references.additional">
+            <include name="nunit.framework.dll" />
+            <include name="NUnitAsp.dll" />
+        </patternset>
+
+        <call target="common.compile-dll" />
+    </target>
+
+    <target name="test" depends="build">
+        <property name="compile.bin.dir" value="${project::get-base-directory()}/bin/debug" overwrite="true" />
+        <call target="common.run-tests" />
+    </target>
+
+</project>

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<project name="GuestBook" default="test" xmlns="http://nant.sf.net/schemas/nant.xsd">
+
+  <property name="project.name" value="GuestBook"/>
+  <property name="project.basedir" value="${project::get-base-directory()}"/>
+
+  <target name="test" depends="clean">
+    <nant buildfile="src/GuestBook.Web/GuestBook.Web.build" target="build" />
+    <nant buildfile="test/GuestBook.Tests/GuestBook.Tests.build" target="test" />
+
+    <!-- nant buildfile="src/SpringAir.Web.2003/SpringAir.Web.build" target="build" if="${ 'net-1.1' == '${framework::get-family(framework::get-target-framework())}-${framework::get-version(framework::get-target-framework())}' }" / -->
+  </target>
+
+  <target name="clean">
+	<delete dir="src/GuestBook.Web/obj" failonerror="false"/>
+	<delete dir="src/GuestBook.Web/bin" failonerror="false"/>
+	<delete dir="test/GuestBook.Tests/obj" failonerror="false"/>
+	<delete dir="test/GuestBook.Tests/bin" failonerror="false"/>
+  </target>
+
+</project>
