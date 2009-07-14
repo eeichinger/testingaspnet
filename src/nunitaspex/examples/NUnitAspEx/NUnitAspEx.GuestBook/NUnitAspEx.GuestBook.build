@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <project name="GuestBook" default="test" xmlns="http://nant.sf.net/schemas/nant.xsd">
 
+  <property name="project.name" value="GuestBook"/>
   <property name="project.basedir" value="${project::get-base-directory()}"/>
-  <property name="lib.dir" value="${project.basedir}/lib"/>
 
-  <target name="test">
+  <target name="test" depends="clean">
     <nant buildfile="src/GuestBook.Web/GuestBook.Web.build" target="build" />
     <nant buildfile="test/GuestBook.Tests/GuestBook.Tests.build" target="test" />
 

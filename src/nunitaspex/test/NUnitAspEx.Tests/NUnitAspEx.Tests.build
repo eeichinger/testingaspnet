@@ -11,7 +11,6 @@
     <include buildfile="${solution.basedir}/shared/common-project.include" verbose="true" />
 
     <target name="build" depends="common.init">
-        <!-- property name="project.name" value="${project::get-name()}" overwrite="true" / -->
 
         <patternset id="project.references.additional">
             <include name="nunit.framework.dll" />
@@ -22,7 +21,6 @@
     </target>
 
     <target name="test" depends="build">
-        <!-- property name="project.name" value="${project::get-name()}" overwrite="true" / -->
         <call target="common.run-tests" />
     </target>
 

@@ -3,7 +3,7 @@
     <include buildfile="${solution.basedir}/shared/common-project.include" verbose="true" />
 
     <target name="build" depends="common.init">
-        <!-- property name="project.name" value="${project::get-name()}" overwrite="true" / -->
+        <property name="compile.bin.dir" value="./bin" overwrite="true" />
 
 <!--
         <patternset id="project.references.additional">
@@ -11,6 +11,7 @@
             <include name="NUnitAsp.dll" />
         </patternset>
 -->
+
         <call target="common.compile-dll" />
     </target>
 
