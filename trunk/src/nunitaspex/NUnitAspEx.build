@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
 <project xmlns="http://nant.sf.net/schemas/nant.xsd"
-		 name="Common.Logging" default="package"> <!-- compile-all -->
+		 name="NUnitAspEx" default="test"> <!-- compile-all -->
 
-  <!-- global project settings -->
+  <!-- global solution settings -->
   <property name="project.name" value="NUnitAspEx"/>
-  <property name="logging.basedir" value="${project::get-base-directory()}"/>
-  <property name="tool.dir" value="${logging.basedir}/tools" />
+  <property name="solution.basedir" value="${project::get-base-directory()}"/>
+  <property name="tool.dir" value="${solution.basedir}/tools" />
 
   <!-- debug or release -->
   <property name="project.build.config" value="debug"/>
-  <property name="project.build.package" value="true"/>
+  <property name="project.build.package" value="false"/>
 
   <property name="compile-net-1.0" value="false"/>
   <property name="compile-net-1.1" value="true"/>
@@ -22,8 +22,8 @@
   <property name="build-integration-tests" value="false"/>
 
   <!-- Include shared helpers -->
-  <include buildfile="${logging.basedir}/shared/Logging.include"/>
+  <include buildfile="${solution.basedir}/shared/solution.include"/>
   <!-- Include main build targets -->
-  <include buildfile="${logging.basedir}/shared/Logging.build"/>
+  <include buildfile="${solution.basedir}/shared/solution.build"/>
 
 </project>

@@ -2,12 +2,15 @@
 <project name="NUnitAspEx.Examples" default="build" xmlns="http://nant.sf.net/schemas/nant.xsd">
 
   <target name="build">
-    <nant buildfile="./NUnitAspEx.GuestBook.build" target="build" />
+    <nant buildfile="./NUnitAspEx.GuestBook/NUnitAspEx.GuestBook.build" target="test" />
 
     <!-- nant buildfile="./SpringAir/SpringAir.build" target="test" if="${build-web}"/ -->
 
   </target>
 
+    <target name="clean">
+        <nant buildfile="./NUnitAspEx.GuestBook/NUnitAspEx.GuestBook.build" target="clean" />
+    </target>
 </project>
 
 

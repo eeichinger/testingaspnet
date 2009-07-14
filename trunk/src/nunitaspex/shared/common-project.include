@@ -56,7 +56,6 @@ ${current.bin.dir}: the binary directory to output the assembly + app.config to
         <property name="assembly.is-cls-compliant" value="false" />
         <property name="assembly.version" value="1.0.0.0" />
         <property name="assembly.version.informational" value="1.0" />
-        <property name="clover.instrument" value="false" />
 
         <patternset id="project.references.default">
             <include name="System.dll" />
@@ -72,7 +71,9 @@ ${current.bin.dir}: the binary directory to output the assembly + app.config to
 
         <patternset id="project.references.additional" />
 
-        <fileset id="project.sources" failonempty="true" />
+        <fileset id="project.sources" failonempty="true">
+            <include name="**/*.cs" />
+        </fileset>
 
         <resourcefileset id="project.resources" />
 
@@ -128,8 +129,10 @@ ${current.build.defines}
              optimize="${current.build.optimize}"
              unsafe="true"
              checked="false"
-             define="${current.build.defines}"
-             doc="${current.bin.dir}/${project::get-name()}.xml">
+             define="${current.build.defines.csc}"
+             doc="${current.bin.dir}/${project::get-name()}.xml"
+             warnaserror="false"
+        >
             <nowarn>
                 <warning number="${current.build.nowarn}" />
             </nowarn>
@@ -142,9 +145,22 @@ ${current.build.defines}
             <resources refid="project.resources" />
         </csc>
 
-                <if test="${file::exists(project::get-base-directory() + '/app.config')}">
+<!--
+        <if test="${file::exists(project::get-base-directory() + '/app.config')}">
             <copy file="${project::get-base-directory()}/app.config" tofile="${current.bin.dir}/${project::get-name()}.dll.config" />
                 </if>
+-->
+        <!-- copy app.config -->
+        <copy file="${project::get-base-directory()}/app.config"
+              tofile="${current.bin.dir}/${project::get-name()}.dll.config" failonerror="false"/>
+
+        <!-- copy 'TestData' directory -->
+        <copy todir="${current.bin.dir}/TestData" failonerror="false">
+          <fileset basedir="${project::get-base-directory()}/TestData">
+            <include name="**/*.*"/>
+          </fileset>
+        </copy>
+
     </target>
 
     <!--

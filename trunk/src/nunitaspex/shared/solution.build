@@ -225,29 +225,29 @@
   </target>
 
   <target name="compile-net-1.1" description="Builds .NET Framework 1.1 version"
-          depends="set-net-1.1-runtime-configuration, check-logging-basedir, clean-current-bin-dir">
+          depends="set-net-1.1-runtime-configuration, check-solution-basedir, clean-current-bin-dir">
     <!-- initialize the temp.build.skip property to false -->
     <property name="temp.build.skip" value="false"/>
     <call target="copykeys"/>
     <if test="${not temp.build.skip}">
       <property name="lib.dir"
-                value="${logging.basedir}/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
+                value="${solution.basedir}/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
       <call target="copylibs"/>
 
       <!-- build source -->
       <nant buildfile="src/${project.name}/${project.name}.build" target="build"/>
-      <!-- build examples -->
-      <nant buildfile="examples/${project.name}/${project.name}.Examples.build" target="build" if="${build-examples}"/>
       <!-- build unit tests -->
       <nant buildfile="test/${project.name}.Tests/${project.name}.Tests.build" target="test" if="${build-tests}"/>
       <!-- build integration tests -->
       <nant buildfile="test/${project.name}.Integration.Tests/${project.name}.Integration.Tests.build" target="test" if="${build-integration-tests}"/>
+      <!-- build examples -->
+      <nant buildfile="examples/${project.name}/${project.name}.Examples.build" target="build" if="${build-examples}"/>
 
     </if>
   </target>
 
   <target name="compile-net-2.0" description="Builds .NET Framework 2.0 version"
-          depends="set-net-2.0-runtime-configuration, check-logging-basedir, clean-current-bin-dir">
+          depends="set-net-2.0-runtime-configuration, check-solution-basedir, clean-current-bin-dir">
     <property name="temp.build.skip" value="false"/>
     <call target="copykeys"/>
     <if test="${not temp.build.skip}">
@@ -257,12 +257,12 @@
 
       <!-- build source -->
       <nant buildfile="src/${project.name}/${project.name}.build" target="build"/>
-      <!-- build examples -->
-      <nant buildfile="examples/${project.name}/${project.name}.Examples.build" target="build" if="${build-examples}"/>
       <!-- build unit tests -->
       <nant buildfile="test/${project.name}.Tests/${project.name}.Tests.build" target="test" if="${build-tests}"/>
       <!-- build integration tests -->
       <nant buildfile="test/${project.name}.Integration.Tests/${project.name}.Integration.Tests.build" target="test" if="${build-integration-tests}"/>
+      <!-- build examples -->
+      <nant buildfile="examples/${project.name}/${project.name}.Examples.build" target="build" if="${build-examples}"/>
     </if>
   </target>
 
@@ -402,9 +402,12 @@
     <delete dir="test/${project.name}.Tests/bin" failonerror="false"/>
     <delete dir="test/${project.name}.Integration.Tests/obj" failonerror="false"/>
     <delete dir="test/${project.name}.Integration.Tests/bin" failonerror="false"/>
-
+<!--
     <delete dir="examples/${project.name}.Examples/src/obj" failonerror="false"/>
     <delete dir="examples/${project.name}.Examples/src/bin" failonerror="false"/>
+-->
+      <nant buildfile="examples/${project.name}/${project.name}.Examples.build" target="clean" failonerror="false" />
+
   </target>
 
 
@@ -793,7 +796,6 @@
       <exclude name="**/obj/**"/>
       <exclude name="**/_ReSharper*/**"/>
       <exclude name="**/sdk-web/**"/>
-      <exclude name="**/sdk/net/1.1/${project.name}-SDK-HTML.zip"/>
       <include name="installer/**"/>
 
     </fileset>
