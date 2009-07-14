@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspEx.2008", "src\NUnitAspEx\NUnitAspEx.2008.csproj", "{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspExTests.2008", "test\NUnitAspExTests\NUnitAspExTests.2008.csproj", "{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspExTests.2008", "test\NUnitAspEx.Tests\NUnitAspEx.Tests.2008.csproj", "{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

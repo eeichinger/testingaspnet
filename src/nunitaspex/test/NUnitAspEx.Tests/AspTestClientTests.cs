@@ -14,7 +14,7 @@ namespace NUnitAspExTests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            host = AspFixtureHost.CreateInstance("/", "/TestWebs/Test1", this);
+            host = AspFixtureHost.CreateInstance("/", "/TestData/Test1", this);
         }
 
         [TestFixtureTearDown]

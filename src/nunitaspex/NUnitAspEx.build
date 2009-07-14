@@ -17,9 +17,9 @@
 
   <property name="package.version" value="1.0.0" unless="${property::exists('project.version')}"/>
 
-  <property name="build-examples" value="false"/>
+  <property name="build-examples" value="true"/>
   <property name="build-tests" value="true"/>
-  <property name="build-integration-tests" value="true"/>
+  <property name="build-integration-tests" value="false"/>
 
   <!-- Include shared helpers -->
   <include buildfile="${logging.basedir}/shared/Logging.include"/>
