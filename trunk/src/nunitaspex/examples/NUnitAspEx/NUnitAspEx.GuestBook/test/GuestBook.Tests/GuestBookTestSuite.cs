@@ -30,10 +30,11 @@ namespace GuestBookTests
             save = new ButtonTester("save", CurrentWebForm);
             book = new DataGridTester("book", CurrentWebForm);
 
-            host = AspFixtureHost.CreateInstance("/", "../../../../src/GuestBook.Web", this);
-            // note new pseudo-protocol "asptest" here:
+            // we use GuestBook.Web as a test target web
+            host = AspFixtureHost.CreateInstance("/testweb", "../../../../src/GuestBook.Web", this);
+            // note new pseudo-protocol "asptest" here and that virtual paths are *always* app-relative:
             //Browser.GetPage("http://localhost/NUnitAsp/sample/tutorial/GuestBook/GuestBook.aspx");
-            Browser.GetPage("asptest://localhost/GuestBook.aspx");
+            Browser.GetPage("asptest://./GuestBook.aspx");
         }
 
         protected override void TearDown()
