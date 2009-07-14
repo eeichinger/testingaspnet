@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspEx.2008", "..\..\..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspEx.Tests.2008", "..\..\..\test\NUnitAspEx.Tests\NUnitAspEx.Tests.2008.csproj", "{3C93A9F9-2F85-4A4B-941C-4EF64C90C194}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook.2008", "src\GuestBook\GuestBook.2008.csproj", "{719EA919-682E-4171-8D5A-F527A2C2DD3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook.Web.2008", "src\GuestBook\GuestBook.Web.2008.csproj", "{719EA919-682E-4171-8D5A-F527A2C2DD3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook.Tests.2008", "test\GuestBook.Tests\GuestBook.Tests.2008.csproj", "{77B6D875-67C3-440D-AF04-A6B726EFE92C}"
 EndProject

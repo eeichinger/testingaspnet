@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <project xmlns="http://nant.sf.net/schemas/nant.xsd"
-         name="NUnitAspEx.Tests" default="build">
+         name="GuestBook.Tests" default="test">
 
     <!--
         Required properties:
@@ -22,7 +22,7 @@
     </target>
 
     <target name="test" depends="build">
-        <!-- property name="project.name" value="${project::get-name()}" overwrite="true" / -->
+        <property name="project.name" value="${project::get-name()}" overwrite="true" />
         <call target="common.run-tests" />
     </target>
 

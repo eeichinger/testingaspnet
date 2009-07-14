@@ -6,9 +6,10 @@
 	<property name="nant.settings.currentframework" value="net-2.0"/>
 
     <!-- The path to the output directory for current build/runtime -->
-    <property name="logging.output.dir"
-              value="${logging.basedir}/bin/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}/${current.build.config}"
+    <property name="solution.output.dir"
+              value="${solution.basedir}/bin/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}/${current.build.config}"
               dynamic="true"/>
+
     <target name="check-bin-dir">
         <if test="${not property::exists('bin.dir')}">
             <property name="bin.dir" value="${project::get-base-directory()}/build"/>
@@ -104,13 +105,13 @@
         </if>
     </target>
 
-    <target name="check-logging-basedir">
-        <if test="${not property::exists('logging.basedir')}">
+    <target name="check-solution-basedir">
+        <if test="${not property::exists('solution.basedir')}">
             <fail message="The logging base directory has not been specified."/>
         </if>
     </target>
-    <target name="check-logging-output-dir">
-        <if test="${not property::exists('logging.output.dir')}">
+    <target name="check-solution-output-dir">
+        <if test="${not property::exists('solution.output.dir')}">
             <fail message="The log4net output directory has not been specified."/>
         </if>
     </target>
@@ -122,12 +123,14 @@
         <delete dir="${current.bin.dir}" if="${directory::exists(current.bin.dir)}"/>
         <mkdir dir="${current.bin.dir}"/>
     </target>
+
     <target name="clean-current-sdkdoc-dir" depends="check-current-sdkdoc-dir"
             description="Cleans the current SDK documentation directory">
         <echo message="Cleaning the ${current.sdkdoc.dir} SDK documentation directory."/>
         <delete dir="${current.sdkdoc.dir}" if="${directory::exists(current.sdkdoc.dir)}"/>
         <mkdir dir="${current.sdkdoc.dir}"/>
     </target>
+
     <!-- Targets for setting up the environment -->
     <target name="set-build-configuration" depends="check-current-build-config">
         <property name="doc.dir" value="${project::get-base-directory()}/doc"/>
@@ -152,6 +155,7 @@
         </if>
         <call target="set-${current.build.config}-build-configuration"/>
     </target>
+
     <target name="set-debug-build-configuration">
         <property name="compiler.args" value=""/>
         <property name="net-2.0" value="false"/>
@@ -166,6 +170,7 @@
         <property name="current.build.config" value="debug"/>
         <call target="set-build-configuration-flags"/>
     </target>
+
     <target name="set-release-build-configuration">
         <property name="compiler.args" value=""/>
         <property name="net-2.0" value="false"/>
@@ -180,37 +185,26 @@
         <property name="current.build.config" value="release"/>
         <call target="set-build-configuration-flags"/>
     </target>
+
     <target name="set-build-configuration-flags" depends="check-current-build-config">
         <property name="current.build.config.debug" value="false"/>
         <property name="current.build.config.release" value="false"/>
         <property name="current.build.config.${current.build.config}" value="true"/>
     </target>
+
     <target name="set-framework-configuration" depends="check-current-build-config">
         <if test="${not target::exists('set-' + framework::get-target-framework() + '-runtime-configuration')}">
             <fail message="The current target framework (${framework::get-description(framework::get-target-framework())}) is not supported by Common.Logging."/>
         </if>
         <call target="set-${framework::get-target-framework()}-runtime-configuration"/>
     </target>
-    <target name="set-net-1.0-runtime-configuration"
-            depends="check-bin-dir, check-sdkdoc-dir, check-sdkdoc-debug, check-current-build-config, check-build-debug, check-build-defines">
-        <property name="nant.settings.currentframework" value="net-1.0"/>
-        <property name="current.build.debug" value="${build.debug}" dynamic="true"/>
-        <property name="current.build.defines.csc" value="${build.defines.csc},NET,NET_1_0" dynamic="true"/>
-        <property name="current.build.defines.jsc" value="${build.defines.jsc},NET,NET_1_0" dynamic="true"/>
-        <property name="current.build.defines.vbc" value="${build.defines.vbc},NET=True,NET_1_0=True" dynamic="true"/>
-        <property name="current.build.defines.vjc" value="${build.defines.vjc},NET,NET_1_0" dynamic="true"/>
-        <property name="current.build.defines.cl" value="${build.defines.cl} /D NET /D NET_1_0" dynamic="true"/>
-        <property name="current.bin.dir"
-                  value="${bin.dir}/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}/${current.build.config}"/>
-        <property name="current.sdkdoc.dir"
-                  value="${sdkdoc.dir}/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
-        <property name="current.sdkdoc.debug" value="${sdkdoc.debug}" dynamic="true"/>
-        <property name="link.sdkdoc.version" value="SDK_v1_0"/>
-    </target>
+
     <target name="set-net-1.1-runtime-configuration"
             depends="check-bin-dir, check-sdkdoc-dir, check-sdkdoc-debug, check-current-build-config, check-build-debug, check-build-defines">
         <property name="nant.settings.currentframework" value="net-1.1"/>
         <property name="current.build.debug" value="${build.debug}" dynamic="true"/>
+        <property name="current.build.optimize" value="${build.optimize}" dynamic="true"/>
+        <property name="current.build.nowarn" value="${nowarn.numbers}" />
         <property name="current.build.defines.csc" value="${build.defines.csc},NET,NET_1_1" dynamic="true"/>
         <property name="current.build.defines.jsc" value="${build.defines.jsc},NET,NET_1_1" dynamic="true"/>
         <property name="current.build.defines.vbc" value="${build.defines.vbc},NET=True,NET_1_1=True" dynamic="true"/>
@@ -223,11 +217,14 @@
         <property name="current.sdkdoc.debug" value="${sdkdoc.debug}" dynamic="true"/>
         <property name="link.sdkdoc.version" value="SDK_v1_1"/>
     </target>
+
     <target name="set-net-2.0-runtime-configuration"
             depends="check-bin-dir, check-sdkdoc-dir, check-sdkdoc-debug, check-current-build-config, check-build-debug, check-build-defines">
         <property name="nant.settings.currentframework" value="net-2.0"/>
         <property name="net-2.0" value="true"/>
         <property name="current.build.debug" value="${build.debug}" dynamic="true"/>
+        <property name="current.build.optimize" value="${build.optimize}" dynamic="true"/>
+        <property name="current.build.nowarn" value="${nowarn.numbers}" />
         <property name="current.build.defines.csc" value="${build.defines.csc},NET,NET_2_0" dynamic="true"/>
         <property name="current.build.defines.jsc" value="${build.defines.jsc},NET,NET_2_0" dynamic="true"/>
         <property name="current.build.defines.vbc" value="${build.defines.vbc},NET=True,NET_2_0=True" dynamic="true"/>
@@ -240,6 +237,7 @@
         <property name="current.sdkdoc.debug" value="${sdkdoc.debug}" dynamic="true"/>
 
     </target>
+
     <target name="set-netcf-1.0-runtime-configuration"
             depends="check-bin-dir, check-sdkdoc-dir, check-sdkdoc-debug, check-current-build-config, check-build-debug, check-build-defines">
         <property name="nant.settings.currentframework" value="netcf-1.0"/>
@@ -256,6 +254,7 @@
         <property name="current.sdkdoc.debug" value="${sdkdoc.debug}" dynamic="true"/>
         <property name="link.sdkdoc.version" value="SDK_v1_1"/>
     </target>
+
     <target name="set-mono-1.0-runtime-configuration"
             depends="check-bin-dir, check-sdkdoc-dir, check-sdkdoc-debug, check-current-build-config, check-build-debug, check-build-defines">
         <property name="nant.settings.currentframework" value="mono-1.0"/>
@@ -272,6 +271,7 @@
         <property name="current.sdkdoc.debug" value="${sdkdoc.debug}" dynamic="true"/>
         <property name="link.sdkdoc.version" value="MsdnOnline"/>
     </target>
+
     <target name="set-sscli-1.0-runtime-configuration"
             depends="check-bin-dir, check-current-build-config, check-build-debug, check-build-defines">
         <property name="nant.settings.currentframework" value="sscli-1.0"/>
@@ -289,6 +289,7 @@
         <property name="current.sdkdoc.debug" value="${sdkdoc.debug}" dynamic="true"/>
         <property name="link.sdkdoc.version" value="MsdnOnline"/>
     </target>
+
     <target name="set-cli-1.0-configuration" depends="check-bin-dir">
         <property name="nant.settings.currentframework" value="net-1.0"/>
         <property name="current.build.debug" value="${build.debug}" dynamic="true"/>

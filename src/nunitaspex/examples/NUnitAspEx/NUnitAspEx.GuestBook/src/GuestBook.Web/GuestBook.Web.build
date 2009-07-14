@@ -1,9 +1,5 @@
 <?xml version="1.0" ?>
-<project xmlns="http://nant.sf.net/schemas/nant.xsd"
-	name="NUnitAspEx" default="build">
-
-	<!-- echo message="NUnitAspEx Source" / -->
-
+<project name="GuestBook.Web" default="build" xmlns="http://nant.sf.net/schemas/nant.xsd">
     <include buildfile="${solution.basedir}/shared/common-project.include" verbose="true" />
 
     <target name="build" depends="common.init">
@@ -17,4 +13,5 @@
 -->
         <call target="common.compile-dll" />
     </target>
+
 </project>
