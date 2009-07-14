@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBookTests.2005", "GuestBookTests\GuestBookTests.2005.csproj", "{77B6D875-67C3-440D-AF04-A6B726EFE92C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBookTests.2008", "GuestBookTests\GuestBookTests.2008.csproj", "{77B6D875-67C3-440D-AF04-A6B726EFE92C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook.2005", "GuestBook\GuestBook.2005.csproj", "{719EA919-682E-4171-8D5A-F527A2C2DD3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook.2008", "GuestBook\GuestBook.2008.csproj", "{719EA919-682E-4171-8D5A-F527A2C2DD3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitAspEx.2008", "..\..\src\NUnitAspEx\NUnitAspEx.2008.csproj", "{AA846899-9DE5-405D-BF3E-3E90F79C3EB8}"
 EndProject
