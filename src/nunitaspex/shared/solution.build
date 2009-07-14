@@ -252,7 +252,7 @@
     <call target="copykeys"/>
     <if test="${not temp.build.skip}">
       <property name="lib.dir"
-                value="${logging.basedir}/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
+                value="${solution.basedir}/lib/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}"/>
       <call target="copylibs"/>
 
       <!-- build source -->

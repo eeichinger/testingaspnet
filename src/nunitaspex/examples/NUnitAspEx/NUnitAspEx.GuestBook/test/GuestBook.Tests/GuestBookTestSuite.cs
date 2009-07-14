@@ -30,7 +30,7 @@ namespace GuestBookTests
             save = new ButtonTester("save", CurrentWebForm);
             book = new DataGridTester("book", CurrentWebForm);
 
-            host = AspFixtureHost.CreateInstance("/", "../../../src/GuestBook.Web", this);
+            host = AspFixtureHost.CreateInstance("/", "../../../../src/GuestBook.Web", this);
             // note new pseudo-protocol "asptest" here:
             //Browser.GetPage("http://localhost/NUnitAsp/sample/tutorial/GuestBook/GuestBook.aspx");
             Browser.GetPage("asptest://localhost/GuestBook.aspx");

@@ -52,10 +52,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HttpRequestRecorder">
-      <Name>HttpRequestRecorder</Name>
-      <HintPath>..\..\..\lib\HttpRequestRecorder.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -73,32 +69,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Global.asax.cs">
+    <Content Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GuestBook.aspx.cs">
+    </Content>
+    <Content Include="GuestBook.aspx.cs">
       <DependentUpon>GuestBook.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    </Content>
     <Content Include="Global.asax">
-      <SubType>Component</SubType>
     </Content>
     <Content Include="GuestBook.aspx">
       <SubType>Form</SubType>
     </Content>
     <Content Include="Web.config" />
-    <EmbeddedResource Include="Global.asax.resx">
-      <DependentUpon>Global.asax.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GuestBook.aspx.resx">
-      <DependentUpon>GuestBook.aspx.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
