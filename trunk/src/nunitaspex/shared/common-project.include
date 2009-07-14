@@ -67,6 +67,7 @@ ${current.bin.dir}: the binary directory to output the assembly + app.config to
             <include name="System.Data.dll" />
             <include name="*.dll" />
         </patternset>
+
         <patternset id="project.references.test" />
 
         <patternset id="project.references.additional" />
@@ -100,44 +101,56 @@ ${current.build.defines}
     -->
     <target name="common.compile-dll" description="compiles sources">
 
-        <property name="current.lib.dir" value="${lib.dir}\${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}" dynamic="true" />
-        <!--<echo message="copying libs from ${current.lib.dir}" />-->
-        <copy todir="${current.bin.dir}">
+        <property name="compile.bin.dir" value="${current.bin.dir}" if="${not property::exists('compile.bin.dir')}" />
+
+        <echo message="copying libs from ${lib.dir} to ${compile.bin.dir}" />
+
+        <property name="compile.lib.dir.tmp" value="${lib.dir}/${framework::get-family(framework::get-target-framework())}/${framework::get-version(framework::get-target-framework())}" dynamic="true" />
+        <echo message="copying libs from ${compile.lib.dir.tmp}" />
+        <copy todir="${compile.bin.dir}">
             <fileset>
-                <include name="${current.lib.dir}/*.dll" />
+                <include name="${compile.lib.dir.tmp}/*.dll" />
             </fileset>
         </copy>
-        <property name="current.lib.dir" value="${lib.dir}\${framework::get-family(framework::get-target-framework())}" dynamic="true" />
-        <!--<echo message="copying libs from ${current.lib.dir}" />-->
-        <copy todir="${current.bin.dir}">
+        <property name="compile.lib.dir.tmp" value="${lib.dir}/${framework::get-family(framework::get-target-framework())}" dynamic="true" />
+        <echo message="copying libs from ${compile.lib.dir.tmp}" />
+        <copy todir="${compile.bin.dir}">
             <fileset>
-                <include name="${current.lib.dir}/*.dll" />
+                <include name="${compile.lib.dir.tmp}/*.dll" />
             </fileset>
         </copy>
-        <property name="current.lib.dir" value="${lib.dir}" dynamic="true" />
-        <!--<echo message="copying libs from ${current.lib.dir}" />-->
-        <copy todir="${current.bin.dir}">
+        <property name="compile.lib.dir.tmp" value="${lib.dir}" dynamic="true" />
+        <echo message="copying libs from ${compile.lib.dir.tmp}" />
+        <copy todir="${compile.bin.dir}">
             <fileset>
-                <include name="${current.lib.dir}/*.dll" />
+                <include name="${compile.lib.dir.tmp}/*.dll" />
+            </fileset>
+        </copy>
+        <property name="compile.lib.dir.tmp" value="${current.bin.dir}" dynamic="true" />
+        <echo message="copying libs from ${compile.lib.dir.tmp}" />
+        <copy todir="${compile.bin.dir}">
+            <fileset>
+                <!-- exclude name="${current.lib.dir}/*.Tests.dll" / -->
+                <include name="${compile.lib.dir.tmp}/*.dll" />
             </fileset>
         </copy>
 
         <csc target="library"
-             verbose="false"
-             output="${current.bin.dir}/${project::get-name()}.dll"
+             verbose="true"
+             warnaserror="false"
+             output="${compile.bin.dir}/${project::get-name()}.dll"
              debug="${current.build.debug}"
              optimize="${current.build.optimize}"
              unsafe="true"
              checked="false"
              define="${current.build.defines.csc}"
              doc="${current.bin.dir}/${project::get-name()}.xml"
-             warnaserror="false"
         >
             <nowarn>
                 <warning number="${current.build.nowarn}" />
             </nowarn>
             <sources refid="project.sources" />
-            <references basedir="${current.bin.dir}">
+            <references basedir="${compile.bin.dir}">
                 <patternset refid="project.references.default" />
                 <patternset refid="project.references.test" />
                 <patternset refid="project.references.additional" />
@@ -190,10 +203,12 @@ ${tool.dir}       : dir for tools
   <target name="common.run-tests.nunit">
 
     <property name="project.name" value="${project::get-name()}" overwrite="false" />
-    <echo message="Unit Testing ${project.name}" />
+    <property name="compile.bin.dir" value="${current.bin.dir}" if="${not property::exists('compile.bin.dir')}" />
 
-    <exec program="${tool.dir}\nunit\nunit-console-x86.exe" workingdir="${current.bin.dir}">
-      <arg path="${current.bin.dir}/${project.name}.dll" />
+    <echo message="Unit Testing ${project.name} in ${compile.bin.dir}" />
+
+    <exec program="${tool.dir}\nunit\nunit-console-x86.exe" workingdir="${compile.bin.dir}">
+      <arg path="${compile.bin.dir}/${project.name}.Tests.dll" />
       <arg value="/xml:${project.name}.dll-testresults.xml" />
       <arg value="/noshadow" />
       <arg value="/nothread" />
