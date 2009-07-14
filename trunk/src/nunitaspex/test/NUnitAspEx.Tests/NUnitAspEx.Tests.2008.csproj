@@ -92,10 +92,10 @@
     <Compile Include="AspTestClientTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Content Include="TestWebs\Test1\testpage.aspx" />
+    <None Include="TestData\Test1\testpage.aspx" />
     <None Include="App.config" />
-    <None Include="TestWebs\Test1\web.config.net-1.1" />
-    <None Include="TestWebs\Test1\web.config.net-2.0" />
+    <None Include="TestData\Test1\web.config.net-1.1" />
+    <None Include="TestData\Test1\web.config.net-2.0" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -135,7 +135,7 @@
     <PreBuildEvent>
     </PreBuildEvent>
     <PostBuildEvent>echo "Copying TestWebs to output directory"
-xcopy "$(ProjectDir)TestWebs" "$(TargetDir)TestWebs\" /y /s /q /d
+xcopy "$(ProjectDir)TestData" "$(TargetDir)TestWebs\" /y /s /q /d
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

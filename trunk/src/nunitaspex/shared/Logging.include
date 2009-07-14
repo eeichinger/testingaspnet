@@ -144,7 +144,7 @@
         <!-- 0618 - do not report deprecation warnings -->
         <!-- 0067 - do not report uncalled events -->
         <!-- 1607 - do not report AssemblyInformationalVersion string format warning -->
-        <property name="nowarn.numbers" value="1591,0618,1607"/>
+        <property name="nowarn.numbers" value="0618,1607"/>
         <!-- use a different set of warnings for building the tests -->
         <property name="nowarn.numbers.test" value="1591,0618,1607,0067"/>
         <if test="${not target::exists('set-' + current.build.config + '-build-configuration')}">
