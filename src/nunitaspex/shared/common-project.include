@@ -203,17 +203,12 @@ ${tool.dir}       : dir for tools
 
     <echo message="Unit Testing ${project.name}.Tests.dll in ${compile.bin.dir}" />
 
-    <!-- workaround nunit bug looking for assembly.config instead of assembly.dll.config -->
-    <copy file="${compile.bin.dir}/${project.name}.Tests.dll.config" tofile="${compile.bin.dir}/${project.name}.Tests.config" failonerror="false" />
-
     <exec program="${tool.dir}\nunit\net-2.0\nunit-console-x86.exe" workingdir="${compile.bin.dir}" verbose="true">
       <arg path="${compile.bin.dir}/${project.name}.Tests.dll" />
       <arg value="/xml=${project.name}.dll-testresults.xml" />
       <arg value="/nologo" />
       <arg value="/noshadow" />
       <arg value="/nothread" />
-      <arg value="/domain=Multiple" />
-      <arg value="/process=Default" />
       <arg value="/framework=${nant.settings.currentframework}" />
     </exec>
 
@@ -235,9 +230,6 @@ ${tool.dir}       : dir for tools
 
         <echo message="Coverage Testing ${project.name}.Tests.dll in ${compile.bin.dir}" />
 
-        <!-- workaround nunit bug looking for assembly.config instead of assembly.dll.config -->
-        <copy file="${compile.bin.dir}/${project.name}.Tests.dll.config" tofile="${compile.bin.dir}/${project.name}.Tests.config" failonerror="false" />
-
         <exec program="${tool.dir}/ncover/ncover.console.exe" workingdir="${compile.bin.dir}">
             <arg value="//q" />
             <arg value="//reg" />
@@ -256,8 +248,6 @@ ${tool.dir}       : dir for tools
             <arg value="/nologo" />
             <arg value="/noshadow" />
             <arg value="/nothread" />
-            <arg value="/domain=Multiple" />
-            <arg value="/process=Default" />
             <arg value="/framework=${nant.settings.currentframework}" />
         </exec>
 
